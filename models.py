@@ -9,11 +9,11 @@ class User(UserMixin, db.Model):
     name = db.Column('name', db.String(120), unique=False, nullable=False)
     dob = db.Column('date_of_birth', db.DateTime, nullable=False)
     registration_time = db.Column('registration_time',db.DateTime, nullable=False)
-    password_hash = db.Column('password_hash',db.String(64), nullable=False)
+    password_hash = db.Column('password_hash',db.String(80), nullable=False)
     remember_me = db.Column('remember_me', db.Boolean, unique=False, default=True)
 
     def set_password(self, password):
-        self.password_hash = generate_password_hash(password)
+        self.password_hash = generate_password_hash(password, method='sha256')
 
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
