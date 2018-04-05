@@ -3,6 +3,15 @@ from models import User
 from flask_wtf import FlaskForm
 from app import db
 
+class RegisterForm(FlaskForm):
+	username = StringField('Username',validators=[InputRequired(), Length(max=20)])
+	name = StringField('Name',validators=[InputRequired(), Length(max=40)])
+	dob = DateField('Date Of Birth',validators=[InputRequired()])
+	password = PasswordField('Password',validators=[InputRequired(),Length(min=8,max=40)], EqualTo('confirm'))
+	confirm = PasswordField('Confirm Password',validators=[InputRequired(),Length(min=8, max=40)])
+	remember=BooleanField('Remember Me')
+
+
 user = Blueprint('user_blueprint', __name__)
 
 @user.route('/user_registration', methods = [POST])
