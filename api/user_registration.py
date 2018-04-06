@@ -1,9 +1,10 @@
-from flask import Blueprint
+from flask import Blueprint,render_template,url_for,request
 from models import User
 from flask_wtf import FlaskForm
 from wtforms import StringField, DateField, PasswordField, BooleanField
 from wtforms.validators import InputRequired, Length, EqualTo
 from models import db, User
+
 
 user_blueprint = Blueprint('user_blueprint', __name__)
 
@@ -20,15 +21,16 @@ class LoginForm(FlaskForm):
 	remember = BooleanField('Remember Me')
 
 
-@user_blueprint.route('/user/registration', methods = ['POST', 'GET'])
+@user_blueprint.route('/user/registration', methods = ['POST','GET'])
 def register_user():
-    form = RegisterForm()
-
-    if form.validate_on_submit():
+    form = RegisterForm(request.form)
+    if request.method=='POST' and form.validate_on_submit():
         new_user = User(username=form.username.data, name=form.name.data, dob=form.dob.data, password_hash=set_password(form.username.password))
         db.session.add(new_user)
         db.session.commit
-        return '<h1>User {} has been created'.format(form.username.data)
+        return render_template('/templates/register.html',form=form)
+
+    return '<h1>Oops.</h1><br><h2>Some error occured, please try again later.</h2>'
 
 @user_blueprint.route('/user/login', methods = ['POST'])
 def login():
