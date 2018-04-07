@@ -1,4 +1,4 @@
-from flask import Flask, Blueprint, render_template, url_for, request, redirect
+from flask import Flask, Blueprint, render_template, url_for, request, redirect, flash
 from config.config import Config
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_bootstrap import Bootstrap
@@ -42,6 +42,10 @@ class RegisterForm(FlaskForm):
 
 @app.route('/user/registration', methods = ['POST', 'GET'])
 def register_user():
+
+    if current_user.is_authenticated:
+        return redirect("/"+current_user.username+"/home")
+
     form = RegisterForm()
     if form.validate_on_submit():
         hashed_password = generate_password_hash(form.password.data, method = 'sha256')
@@ -54,11 +58,13 @@ def register_user():
 
 class LoginForm(FlaskForm):
     username = StringField('username',validators=[InputRequired(), Length(max=20)])
-    password = PasswordField('password',validators=[InputRequired(),Length(min=8,max=40)])
+    password = PasswordField('password',validators=[InputRequired()])
     remember = BooleanField('Remember Me')
 
 @app.route('/user/login', methods = ['POST', 'GET'])
 def login():
+    if current_user.is_authenticated:
+        return redirect("/"+current_user.username+"/home")
     form = LoginForm()
     if form.validate_on_submit():
         print('validated')
@@ -67,8 +73,9 @@ def login():
         if user:
             if check_password_hash(user.password_hash,form.password.data):
                 login_user(user, remember=form.remember.data)
-                return redirect('/dashboard')
-        return '<h1>Invalid Username/Password</h1>'
+                return redirect("/"+user.username+"/home")
+        flash('Invalid username or password')
+        return render_template('login.html',form=form)
     return render_template('login.html',form=form)
 
 @app.route('/dashboard')
