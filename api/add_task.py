@@ -3,6 +3,7 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, SelectField
 from wtforms.fields.html5 import DateField
 from wtforms.validators import Email, EqualTo, Length, Required, InputRequired
+from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from models import db, User, Task
 
 task_blueprint = Blueprint('task_blueprint', __name__)
@@ -16,8 +17,9 @@ class TaskForm(FlaskForm):
     priority = BooleanField('Priority')
     incentive = StringField('Incentives', validators=[Length(max=200)])
     consequences = StringField('Consequences', validators=[Length(max=200)])
-    
+
 @task_blueprint.route('/<user_name>/newtask', methods = ['POST', 'GET'])
+@login_required
 def add_task(user_name):
     userid=User.query.filter(User.username==user_name).first().id
     form=TaskForm()
@@ -29,8 +31,7 @@ def add_task(user_name):
     return render_template('newtask.html',form=form, username=user_name)
 
 @task_blueprint.route('/<user_name>/home',methods=['POST','GET'])
+@login_required
 def go_home(user_name):
     userid=User.query.filter(User.username==user_name).first().id
     return render_template('home.html',user=User.query.get(userid),tasks=Task.query.filter(Task.user_id==userid))
-
-
