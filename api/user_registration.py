@@ -33,24 +33,23 @@ class LoginForm(FlaskForm):
 def register_user():
     form = RegisterForm()
     if form.validate_on_submit():
-        new_user = User(username=form.username.data, name=form.name.data,
-                        dob=form.dob.data, password_hash=User.hash_password(form.password.data))
+        hashed_password = generate_password_hash(form.password.data, method = 'sha256')
+        new_user = User(username=form.username.data, name=form.name.data, dob=form.dob.data, password_hash=hashed_password)
         db.session.add(new_user)
         db.session.commit()
         return redirect("/"+new_user.username+"/home")
     return render_template('register.html', form=form)
 
-
-@user_blueprint.route('/user/login', methods=['POST'])
+@user_blueprint.route('/user/login', methods = ['POST', 'GET'])
 def login():
     form = LoginForm()
     if form.validate_on_submit():
-        user = User.query.filter_by(username=form.username.data).first()
-        if user is None or not user.check_password(form.password.data):
-            return '<h1>Invalid username or password</h1>'
-            # return redirect(url_for('login'))
-
-        login_user(user, remember=form.remember.data)
-        return '<h1>Login Successful</h1>'
-        # return redirect(url_for('index'))
-    return render_template('login.html', form=form)
+        print('validated')
+        user = User.query.filter_by(username = form.username.data).first()
+        print(user)
+        if user:
+            if check_password_hash(user.password_hash,form.password.data):
+                login_user(user, remember=form.remember.data)
+                return redirect('/dashboard')
+        return '<h1>Invalid Username/Password</h1>'
+    return render_template('login.html',form=form)

@@ -16,7 +16,7 @@ class TaskForm(FlaskForm):
     priority = BooleanField('Priority')
     incentive = StringField('Incentives', validators=[Length(max=200)])
     consequences = StringField('Consequences', validators=[Length(max=200)])
-
+    
 @task_blueprint.route('/<user_name>/newtask', methods = ['POST', 'GET'])
 def add_task(user_name):
     userid=User.query.filter(User.username==user_name).first().id
