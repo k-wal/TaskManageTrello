@@ -17,21 +17,20 @@ class TaskForm(FlaskForm):
     incentive = StringField('Incentives', validators=[Length(max=200)])
     consequences = StringField('Consequences', validators=[Length(max=200)])
 
-@task_blueprint.route('/<use_id>/newtask', methods = ['POST', 'GET'])
-def add_task(use_id):
+@task_blueprint.route('/<user_name>/newtask', methods = ['POST', 'GET'])
+def add_task(user_name):
+    userid=User.query.filter(User.username==user_name).first().id
     form=TaskForm()
     if form.validate_on_submit():
-        new_task = Task(user_id=use_id,deadline=form.deadline.data,name=form.name.data,description=form.description.data,status=form.status.data,priority=form.priority.data,incentive=form.incentive.data,consequences=form.consequences.data)
+        new_task = Task(user_id=userid,deadline=form.deadline.data,name=form.name.data,description=form.description.data,status=form.status.data,priority=form.priority.data,incentive=form.incentive.data,consequences=form.consequences.data)
         db.session.add(new_task)
         db.session.commit()
-        print("**************")
-        print(use_id)
-        return redirect("/"+str(use_id)+"/home")
-    return render_template('newtask.html',form=form, user_id=use_id)
+        return redirect("/"+user_name+"/home")
+    return render_template('newtask.html',form=form, username=user_name)
 
-@task_blueprint.route('/<use_id>/home',methods=['POST','GET'])
-def go_home(use_id):
-    print(use_id)
-    return render_template('home.html',user=User.query.get(use_id),tasks=Task.query.filter(Task.user_id==use_id))
+@task_blueprint.route('/<user_name>/home',methods=['POST','GET'])
+def go_home(user_name):
+    userid=User.query.filter(User.username==user_name).first().id
+    return render_template('home.html',user=User.query.get(userid),tasks=Task.query.filter(Task.user_id==userid))
 
 

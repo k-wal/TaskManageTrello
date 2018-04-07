@@ -37,7 +37,7 @@ def register_user():
                         dob=form.dob.data, password_hash=User.hash_password(form.password.data))
         db.session.add(new_user)
         db.session.commit()
-        return redirect("/"+str(new_user.id)+"/home")
+        return redirect("/"+new_user.username+"/home")
     return render_template('register.html', form=form)
 
 

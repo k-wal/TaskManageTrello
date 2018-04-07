@@ -12,7 +12,7 @@
     <div class="container">
         <div class="col-sm-4"></div>
         <div class="col-sm-4">
-            <form class="" action="/{{user_id}}/newtask" method="POST">
+            <form class="" action="/{{username}}/newtask" method="POST">
                 {{ form.csrf_token }}
                 {% from "_formhelpers.html" import render_field %}
                 <div class="form-group">{{render_field(form.name, class_="form-control")}}</div>
