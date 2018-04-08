@@ -20,6 +20,7 @@ class User(UserMixin, db.Model):
     username = db.Column('username', db.String(64), unique=True, nullable=False)
     name = db.Column('name', db.String(120), unique=False, nullable=False)
     dob = db.Column('date_of_birth', db.DateTime, nullable=False)
+    email = db.Column('email', db.String(64), nullable=False, unique=True)
     registration_time = db.Column('registration_time',db.DateTime, default=datetime.utcnow)
     password_hash = db.Column('password_hash',db.String(80), nullable=False)
     remember_me = db.Column('remember_me', db.Boolean, unique=False, default=False)

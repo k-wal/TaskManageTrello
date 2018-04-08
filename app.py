@@ -31,7 +31,7 @@ def load_user(user_id):
     return User.query.get(int(user_id))
 
 
-#### FROM api.user_registration
+### FROM api.user_registration
 class RegisterForm(FlaskForm):
     username = StringField('Username', validators=[InputRequired(), Length(max=32)])
     password = PasswordField('Password', validators=[Required(), EqualTo('confirm', message='Passwords must match')])
@@ -49,7 +49,7 @@ def register_user():
     form = RegisterForm()
     if form.validate_on_submit():
         hashed_password = generate_password_hash(form.password.data, method = 'sha256')
-        new_user = User(username=form.username.data, name=form.name.data, dob=form.dob.data, password_hash=hashed_password)
+        new_user = User(username=form.username.data, name=form.name.data, dob=form.dob.data, password_hash=hashed_password, email=form.email.data)
         db.session.add(new_user)
         db.session.commit()
         return redirect("/"+new_user.username+"/home")
@@ -83,12 +83,49 @@ def login():
 def dashboard():
     return '<h1>you are registered</h1>'
 
-@app.route('/logout')
+@app.route('/<user_name>/logout')
 @login_required
-def logout():
+def logout(user_name):
     logout_user()
-    return redirect('index.html')
-#### ENDS here
+    return redirect('/user/login')
+
+
+class DeleteForm(FlaskForm):
+    username = StringField('username',validators=[InputRequired(), Length(max=20)])
+
+@app.route('/user/delete',  methods = ['POST', 'GET'])
+def delete_user():
+    form = DeleteForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(username = form.username.data).first()
+        db.session.delete(user)
+        db.session.commit()
+        return render_template('delete_user.html',users = User.query.all(),form=form)
+    return render_template('delete_user.html',users = User.query.all(), form=form)
+
+
+class UpdateForm(FlaskForm):
+    username = StringField('username',validators=[InputRequired(), Length(max=30)])
+    dob = DateField('Date Of Birth', validators=[InputRequired()])
+    email = StringField('Email', validators=[InputRequired(), Email()])
+    name = StringField('Name', validators=[InputRequired(), Length(max=64)])
+
+@app.route('/<user_name>/update_information', methods = ['POST', 'GET'])
+@login_required
+def update_information(user_name):
+    print(user_name)
+    form = UpdateForm(username=current_user.username, dob=current_user.dob, email=current_user.email, name=current_user.name)
+    if form.validate_on_submit():
+        current_user.username = form.username.data
+        current_user.dob = form.dob.data
+        current_user.email = form.email.data
+        current_user.name = form.name.data
+        db.session.commit()
+        return redirect("/"+user_name+"/home")
+    return render_template('update_user_information.html',current_user=current_user, form=form, username=user_name)
+
+
+### ENDS here
 
 if __name__ == '__main__':
     db.init_app(app=app)
