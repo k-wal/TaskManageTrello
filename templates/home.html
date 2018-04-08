@@ -3,12 +3,15 @@
 {% block content %}
 
 <div class="row">
-<div class="col-sm-3">Welcome, {{ user.name }}</div>
+<div class="col-sm-3"><h4>Welcome, {{ user.name }}</h4></div>
 <div class="col-sm-3"></div>
 <div class="col-sm-2"><a href="/{{user.username}}/newtask">New Task</a></div>
 <div class="col-sm-2"><a href="/{{user.username}}/update_information">Change Information</a></div>
 <div class="col-sm-2"><a href="/{{user.username}}/logout">Logout</a></div>
 </div>
+<br>
+<br>
+<div class="container-fluid"><h5><b>Your tasks</b></h5></div>
 <div class="container-fluid">
 {% if tasks %}
 {% for task in tasks %}
