@@ -1,0 +1,18 @@
+peerlists:
+	a list of peers that every user has.
+	peer request : like friend request but with peers
+
+
+to asign a task to someone:
+	they should be on you peer list
+	you need to send them a request first, which they need to approve
+
+
+notifications:
+	every time you recieve a peer request
+	every time someone has accepted your peer request
+	every time you recieve a task request
+	every time someone has accepted your task request
+	every time some task you are involved in has some development(someone gets assigned a task/a task has had some changes)
+
+	
