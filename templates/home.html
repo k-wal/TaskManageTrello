@@ -2,19 +2,22 @@
 
 {% block content %}
 
-
-<div>Welcome, {{ user.name }}</div>
-<div><a href="/{{user.username}}/newtask">New Task</a></div>
-<div><a href="/{{user.username}}/update_information">Change Information</a></div>
-<div><a href="/{{user.username}}/logout">Logout</a></div>
-
+<div class="row">
+<div class="col-sm-3">Welcome, {{ user.name }}</div>
+<div class="col-sm-3"></div>
+<div class="col-sm-2"><a href="/{{user.username}}/newtask">New Task</a></div>
+<div class="col-sm-2"><a href="/{{user.username}}/update_information">Change Information</a></div>
+<div class="col-sm-2"><a href="/{{user.username}}/logout">Logout</a></div>
+</div>
 <div class="container-fluid">
 {% if tasks %}
 {% for task in tasks %}
 <div class="row">
-	<div class="col-sm-4">{{task.name}}</div>
-	<div class="col-sm-4">{{task.description}}</div>
-	<div class="col-sm-4">{{task.deadline}}</div>
+	<div class="col-sm-3">{{task.name}}</div>
+	<div class="col-sm-3">{{task.description}}</div>
+	<div class="col-sm-3">{{task.deadline}}</div>
+	<div class="col-sm-2"><a href="/{{user.username}}/{{task.id}}">See More Details</a></div>
+
 </div>
 {% endfor %}
 {% endif %}

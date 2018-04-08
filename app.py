@@ -127,7 +127,7 @@ def update_information(user_name):
         current_user.email = form.email.data
         current_user.name = form.name.data
         db.session.commit()
-        return redirect("/"+user_name+"/home")
+        return redirect("/"+form.username.data+"/home")
     return render_template('update_user_information.html',current_user=current_user, form=form, username=user_name)
 
 
