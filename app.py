@@ -37,7 +37,7 @@ def load_user(user_id):
 def index():
     return render_template('index.html')
 
-    
+
 class RegisterForm(FlaskForm):
     username = StringField('Username', validators=[InputRequired(), Length(max=32)])
     password = PasswordField('Password', validators=[Required(), EqualTo('confirm', message='Passwords must match')])
@@ -93,7 +93,7 @@ def dashboard():
 @login_required
 def logout(user_name):
     logout_user()
-    return redirect('/user/login')
+    return redirect('/index')
 
 
 class DeleteForm(FlaskForm):
