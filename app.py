@@ -32,6 +32,12 @@ def load_user(user_id):
 
 
 ### FROM api.user_registration
+@app.route('/')
+@app.route('/index')
+def index():
+    return render_template('index.html')
+
+    
 class RegisterForm(FlaskForm):
     username = StringField('Username', validators=[InputRequired(), Length(max=32)])
     password = PasswordField('Password', validators=[Required(), EqualTo('confirm', message='Passwords must match')])
