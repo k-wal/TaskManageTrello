@@ -146,16 +146,44 @@ class FollowForm(FlaskForm):
 
 @app.route('/<user_name>/follow', methods = ['POST', 'GET'])
 @login_required
-def follow_user(user_name):
-    form = FollowForm()
+def go_to_follow(user_name):
     following = current_user.all_followed()
-    if form.validate_on_submit():
-        user = User.query.filter_by(username = form.username.data).first()
-        print(user)
-        current_user.follow(user)
-        db.session.commit()
-        return redirect("/"+user_name+"/follow")
-    return render_template('follow.html', username=user_name, form=form, following=following, users=User.query.all())
+    return render_template('follow.html',users=[],username=user_name,following=following)
+
+
+
+@app.route('/<user_name>/follow/search_users')
+@login_required
+def search_tasks(user_name):
+    to_search=request.args.get('query')
+    following = current_user.all_followed()
+    print(to_search)
+    users=[]
+    Users=User.query.all()
+    for user in Users:
+        print(user.name)
+        if user.username is not user_name: 
+            if to_search in user.name or to_search in user.username:
+                users.append(user)
+    return render_template('follow.html',users=users,username=user_name,following=following)
+
+
+@app.route('/<user_name>/follow=<to_follow>', methods = ['POST', 'GET'])
+@login_required
+def follow_user(user_name,to_follow):
+    following = current_user.all_followed()
+    user = User.query.filter_by(username = to_follow).first()
+    print(user)
+    current_user.follow(user)
+    db.session.commit()
+    return render_template('now_following_message.html',username=user_name,user=user)
+ 
+@app.route('/<user_name>/following', methods = ['POST', 'GET'])
+@login_required
+def following(user_name):
+    following = current_user.all_followed()
+    return render_template('following.html',following=following,username=user_name)
+
 
 
 ### ENDS here

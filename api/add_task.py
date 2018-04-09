@@ -81,7 +81,6 @@ def delete_task(user_name,task_id):
     db.session.delete(Task.query.get(task_id))
     db.session.commit()
     return render_template('task_deleted.html',username=user_name)
-
 class TaskDependencyForm(FlaskForm):
     name = StringField('Task', validators=[InputRequired(), Length(max=100)])
 
@@ -99,3 +98,15 @@ def dependent(user_name,task_id):
         db.session.commit()
         return redirect("/"+user_name+'/'+task_id+"/dependency")
     return render_template('task_dependency.html', username=user_name, form=form, deptask=deptask, alltasks=alltasks, current_task=current_task, task_id=task_id)
+
+@task_blueprint.route('/<user_name>/search_tasks')
+@login_required
+def search_tasks(user_name):
+    to_search=request.args.get('query')
+    user=User.query.filter(User.username==user_name).first()
+    Tasks = Task.query.filter(Task.user_id==user.id)
+    tasks=[]
+    for task in Tasks:
+        if to_search in task.name or to_search in task.description:
+            tasks.append(task)
+    return render_template('home.html',user=user,tasks=tasks)
