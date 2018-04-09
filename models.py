@@ -14,8 +14,13 @@ def __set_sqlite_pragma(db_conn, conn_record):
     cursor.close()
 
 
+followers = db.Table('followers',
+    db.Column('follower_id', db.Integer, db.ForeignKey('user.user_id')),
+    db.Column('followed_id', db.Integer, db.ForeignKey('user.user_id')),
+)
+
 class User(UserMixin, db.Model):
-    __tablename__ = 'user-table'
+    # __tablename__ = 'user-table'
     id = db.Column('user_id', db.Integer, primary_key=True, autoincrement=True)
     username = db.Column('username', db.String(64), unique=True, nullable=False)
     name = db.Column('name', db.String(120), unique=False, nullable=False)
@@ -25,9 +30,15 @@ class User(UserMixin, db.Model):
     password_hash = db.Column('password_hash',db.String(80), nullable=False)
     remember_me = db.Column('remember_me', db.Boolean, unique=False, default=False)
 
+    followed = db.relationship(
+    'User', secondary=followers,
+    primaryjoin=(followers.c.follower_id == id),
+    secondaryjoin=(followers.c.followed_id == id),
+    backref=db.backref('followers', lazy='dynamic'), lazy='dynamic')
+
     tasks = db.relationship(
         'Task',
-        backref=db.backref('user-table', lazy='joined'),
+        backref=db.backref('user', lazy='joined'),
         cascade="all, delete-orphan",
         passive_deletes=True
     )
@@ -36,6 +47,21 @@ class User(UserMixin, db.Model):
 
     def check_password(self,password):
         return check_password_hash(self.password_hash, password)
+
+    def all_followed(self):
+        return self.followed.all()
+
+    def follow(self, user):
+        if not self.is_following(user):
+            self.followed.append(user)
+
+    def unfollow(self, user):
+        if self.is_following(user):
+            self.followed.remove(user)
+
+    def is_following(self, user):
+        return self.followed.filter(
+            followers.c.followed_id == user.id).count() > 0
 
     def serialize(self):
         return {
@@ -63,7 +89,7 @@ class Task(db.Model):
     end_time = db.Column('end_time', db.DateTime)
     deadline = db.Column('deadline', db.DateTime, nullable=False)
     user_id = db.Column('user_id', db.Integer, db.ForeignKey(
-        'user-table', ondelete='CASCADE'), nullable=False)
+        'user', ondelete='CASCADE'), nullable=False)
     name = db.Column('name', db.String(100), nullable=False)
     description = db.Column('description', db.String(200))
     status = db.Column('status', db.Enum(

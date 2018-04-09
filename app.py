@@ -104,8 +104,9 @@ def delete_user():
     form = DeleteForm()
     if form.validate_on_submit():
         user = User.query.filter_by(username = form.username.data).first()
-        db.session.delete(user)
-        db.session.commit()
+        if user:
+            db.session.delete(user)
+            db.session.commit()
         return render_template('delete_user.html',users = User.query.all(),form=form)
     return render_template('delete_user.html',users = User.query.all(), form=form)
 
@@ -127,8 +128,24 @@ def update_information(user_name):
         current_user.email = form.email.data
         current_user.name = form.name.data
         db.session.commit()
-        return redirect("/"+user_name+"/home")
+        return redirect("/"+form.username.data+"/home")
     return render_template('update_user_information.html',current_user=current_user, form=form, username=user_name)
+
+class FollowForm(FlaskForm):
+    username = StringField('username',validators=[InputRequired(), Length(max=30)])
+
+@app.route('/<user_name>/follow', methods = ['POST', 'GET'])
+@login_required
+def follow_user(user_name):
+    form = FollowForm()
+    following = current_user.all_followed()
+    if form.validate_on_submit():
+        user = User.query.filter_by(username = form.username.data).first()
+        print(user)
+        current_user.follow(user)
+        db.session.commit()
+        return redirect("/"+user_name+"/follow")
+    return render_template('follow.html', username=user_name, form=form, following=following, users=User.query.all())
 
 
 ### ENDS here

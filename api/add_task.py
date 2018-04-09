@@ -35,3 +35,49 @@ def add_task(user_name):
 def go_home(user_name):
     userid=User.query.filter(User.username==user_name).first().id
     return render_template('home.html',user=User.query.get(userid),tasks=Task.query.filter(Task.user_id==userid))
+
+@task_blueprint.route('/<user_name>/<task_id>',methods=['POST','GET'])
+@login_required
+def show_task(user_name,task_id):
+    userid=User.query.filter(User.username==user_name).first().id
+    return render_template('showtask.html',user=User.query.get(userid),task=Task.query.get(task_id),task_id=task_id)
+
+class EditTaskForm(FlaskForm):
+    deadline = DateField('Deadline', validators=[InputRequired()])
+    name = StringField('Task', validators=[InputRequired(), Length(max=100)])
+    description = StringField('Description', validators=[Length(max=200)])
+    status = SelectField('Status', choices=[('Pending', 'Pending'), ('Ongoing', 'Ongoing'), ('Completed', 'Completed')], default='Pending')
+    priority = BooleanField('Priority')
+    incentive = StringField('Incentives', validators=[Length(max=200)])
+    consequences = StringField('Consequences', validators=[Length(max=200)])
+
+
+@task_blueprint.route('/<user_name>/<task_id>/edit',methods=['POST','GET'])
+@login_required
+def edit_task(user_name,task_id):
+    userid=User.query.filter(User.username==user_name).first().id
+    current_task=Task.query.get(task_id)
+    form=EditTaskForm(deadline=current_task.deadline,name=current_task.name,description=current_task.description,status=current_task.status,priority=current_task.priority,incentive=current_task.incentive,consequences=current_task.consequences)
+    if form.validate_on_submit():
+        current_task.name=form.name.data
+        current_task.deadline=form.deadline.data
+        current_task.description=form.description.data
+        current_task.status=form.status.data
+        current_task.priority=form.priority.data
+        current_task.incentive=form.incentive.data
+        current_task.consequences=form.consequences.data
+        db.session.commit() 
+        return redirect("/"+user_name+"/home")
+    return render_template('edit_task.html',form=form, username=user_name,task_id=task_id)
+
+@task_blueprint.route('/<user_name>/<task_id>/delete',methods=['POST','GET'])
+@login_required
+def go_to_delete(user_name,task_id):
+    return render_template('delete_task.html',username=user_name,task=Task.query.get(task_id),task_id=task_id)
+
+@task_blueprint.route('/<user_name>/<task_id>/task_deleted',methods=['POST','GET'])
+@login_required
+def delete_task(user_name,task_id):
+    db.session.delete(Task.query.get(task_id))
+    db.session.commit()
+    return render_template('task_deleted.html',username=user_name)
