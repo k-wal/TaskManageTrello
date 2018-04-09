@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div>You are now following {{user.name}}</div>
+    <br>
+    <div><a href="/{{username}}/follow">Follow more people</a></div>
+    <div><a href="/{{username}}/following">See who else you're following</a></div>
+    <div><a href="/{{username}}/home">Go to Home</a></div>
+{% endblock %}

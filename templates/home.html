@@ -9,7 +9,23 @@
 <div class="col-sm-2"><a href="/{{user.username}}/update_information">Change Information</a></div>
 <div class="col-sm-2"><a href="/{{user.username}}/logout">Logout</a></div>
 </div>
+<div class="row">
+	<div class="col-sm-6"></div>
+	<div class="col-sm-2"><a href="/{{user.username}}/follow">Follow</a></div>
+	<div class="col-sm-2"><a href="/{{user.username}}/following">Following</a></div>
+
+</div>
 <br>
+<div class="sidebar-module sidebar-module-inset">
+	<h4>Search Tasks</h4>
+	<form class="form-inline" method="GET" action="/{{user.username}}/search_tasks">	
+		<div class="form-group">
+			<input type="text" class="form-control" name="query" id="query">
+		</div>
+		<button type="submit" class="btn btn-primary">Search</button>
+	</form>
+</div>
+
 <br>
 <div class="container-fluid"><h5><b>Your tasks</b></h5></div>
 <div class="container-fluid">
