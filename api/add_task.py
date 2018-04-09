@@ -66,7 +66,7 @@ def edit_task(user_name,task_id):
         current_task.priority=form.priority.data
         current_task.incentive=form.incentive.data
         current_task.consequences=form.consequences.data
-        db.session.commit() 
+        db.session.commit()
         return redirect("/"+user_name+"/home")
     return render_template('edit_task.html',form=form, username=user_name,task_id=task_id)
 
@@ -81,3 +81,21 @@ def delete_task(user_name,task_id):
     db.session.delete(Task.query.get(task_id))
     db.session.commit()
     return render_template('task_deleted.html',username=user_name)
+
+class TaskDependencyForm(FlaskForm):
+    name = StringField('Task', validators=[InputRequired(), Length(max=100)])
+
+@task_blueprint.route('/<user_name>/<task_id>/dependency',methods=['POST','GET'])
+@login_required
+def dependent(user_name,task_id):
+    alltasks = Task.query.filter(Task.user_id==current_user.id)
+    form = TaskDependencyForm()
+    current_task = Task.query.get(task_id)
+    deptask = current_task.all_dependent()
+    if form.validate_on_submit():
+        task = Task.query.filter(Task.user_id==current_user.id, Task.name==form.name.data).first()
+        if task:
+            current_task.dependent_on(task)
+        db.session.commit()
+        return redirect("/"+user_name+'/'+task_id+"/dependency")
+    return render_template('task_dependency.html', username=user_name, form=form, deptask=deptask, alltasks=alltasks, current_task=current_task, task_id=task_id)

@@ -5,6 +5,7 @@ from flask_bootstrap import Bootstrap
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from api.user_registration import user_blueprint
+from api.upload_profile_images import image_blueprint
 from api.add_task import task_blueprint
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField
@@ -12,8 +13,16 @@ from wtforms.fields.html5 import DateField
 from wtforms.validators import Email, EqualTo, Length, Required, InputRequired
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from models import db, User
+import os
+from flask import request
+from werkzeug.utils import secure_filename
+
+
+basedir = os.path.abspath(os.path.dirname(__file__))
+UPLOAD_FOLDER = basedir+'/uploads'
 
 app = Flask(__name__)
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config.from_object(Config)
 # db = SQLAlchemy(app)
 # migrate = Migrate(app, db)
@@ -21,6 +30,7 @@ app.config.from_object(Config)
 #NEED TO FIND OUT HOW @login_required for blueprints
 # app.register_blueprint(user_blueprint)
 app.register_blueprint(task_blueprint)
+app.register_blueprint(image_blueprint)
 
 login_manager = LoginManager()
 login_manager.init_app(app)

@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-sm-3"></div>
+        <div class="col-sm-6 caption1 align="center"">
+            <h1>{{current_task.name}}</h1>
+        </div>
+        <div class="col-sm-3"></div>
+    </div>
+
+    <div class="container-fluid">
+    {% if alltasks %}
+    {% for task in alltasks %}
+    <div class="row">
+    	<div class="col-sm-6">{{task.name}}</div>
+    </div>
+    {% endfor %}
+    {% endif %}
+
+    <div class="container">
+        <div class="col-sm-4"></div>
+        <div class="col-sm-4">
+            <form class="" action="/{{username}}/{{task_id}}/dependency" method="POST">
+                {{ form.csrf_token }}
+                {% from "_formhelpers.html" import render_field %}
+                <div class="form-group">{{render_field(form.name, class_="form-control")}}</div>
+                <input type="submit" value="Submit">
+            </form>
+        </div>
+        <div class="col-sm-4"></div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-3"></div>
+        <div class="col-sm-6 caption1 align="center"">
+            <h1>Dependent Tasks</h1>
+        </div>
+        <div class="col-sm-3"></div>
+    </div>
+    <div class="container-fluid">
+    {% if deptask %}
+    {% for t in deptask %}
+    <div class="row">
+        <div class="col-sm-6">{{t.name}}</div>
+    </div>
+    {% endfor %}
+    {% endif %}
+
+</div>
+</div>
+{% endblock %}

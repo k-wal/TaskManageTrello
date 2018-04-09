@@ -19,6 +19,14 @@ followers = db.Table('followers',
     db.Column('followed_id', db.Integer, db.ForeignKey('user.user_id')),
 )
 
+# class Friends(Base):
+#     __tablename__ = 'friends'
+#     user_id = db.Column(db.Integer, ForeignKey('user.user_id'), primary_key=True)
+#     friend_id = db.Column(db.Integer, ForeignKey('user.user_id'), primary_key=True)
+#     request_status = db.Column(db.Boolean, unique=False, default=False)
+#     user = db.relationship('User', foreign_keys='Friend.user_id')
+#     friend = db.relationship('User', foreign_keys='Friend.friend_id')
+
 class User(UserMixin, db.Model):
     # __tablename__ = 'user-table'
     id = db.Column('user_id', db.Integer, primary_key=True, autoincrement=True)
@@ -29,6 +37,7 @@ class User(UserMixin, db.Model):
     registration_time = db.Column('registration_time',db.DateTime, default=datetime.utcnow)
     password_hash = db.Column('password_hash',db.String(80), nullable=False)
     remember_me = db.Column('remember_me', db.Boolean, unique=False, default=False)
+    profile_picture = db.Column('profile_picture', db.String(64))
 
     followed = db.relationship(
     'User', secondary=followers,
@@ -78,6 +87,11 @@ class User(UserMixin, db.Model):
         return self.serialize().__repr__()
 
 
+dependent_tasks = db.Table('dependent_tasks',
+    db.Column('task_id', db.Integer, db.ForeignKey('task-table.task_id')),
+    db.Column('dependent_id', db.Integer, db.ForeignKey('task-table.task_id')),
+)
+
 class Task(db.Model):
 
     __tablename__ = 'task-table'
@@ -97,6 +111,27 @@ class Task(db.Model):
     priority = db.Column('priority', db.Boolean, nullable=False, default=False)
     incentive = db.Column('incentive', db.String(200))
     consequences = db.Column('consequences', db.String(200))
+
+    dependent = db.relationship(
+    'Task', secondary=dependent_tasks,
+    primaryjoin=(dependent_tasks.c.task_id == id),
+    secondaryjoin=(dependent_tasks.c.dependent_id == id),
+    backref=db.backref('dependent_tasks', lazy='dynamic'), lazy='dynamic')
+
+    def all_dependent(self):
+        return self.dependent.all()
+
+    def dependent_on(self, task):
+        if not self.is_dependent(task):
+            self.dependent.append(task)
+
+    def remove_dependency(self, task):
+        if self.is_dependent(task):
+            self.dependent.remove(task)
+
+    def is_dependent(self, task):
+        return self.dependent.filter(
+            dependent_tasks.c.dependent_id == task.id).count() > 0
 
     def serialize(self):
         return {
