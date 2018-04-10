@@ -37,7 +37,8 @@ class User(UserMixin, db.Model):
     registration_time = db.Column('registration_time',db.DateTime, default=datetime.utcnow)
     password_hash = db.Column('password_hash',db.String(80), nullable=False)
     remember_me = db.Column('remember_me', db.Boolean, unique=False, default=False)
-    profile_picture = db.Column('profile_picture', db.String(64))
+    profile_picture_filename = db.Column('profile_picture_filename', db.String(64))
+    profile_picture_url = db.Column('profile_picture_url', db.String(64))
 
     followed = db.relationship(
     'User', secondary=followers,
@@ -151,3 +152,10 @@ class Task(db.Model):
 
     def __repr__(self):
         return self.serialize().__repr__()
+
+class List(db.Model):
+    id = db.Column('task_id', db.Integer, primary_key=True, autoincrement=True)
+    create_time = db.Column('create_time', db.DateTime, default=datetime.utcnow)
+    name = db.Column('name', db.String(100), nullable=False)
+    description = db.Column('description', db.String(200))
+    user_id = db.Column('user_id', db.Integer, db.ForeignKey('user', ondelete='CASCADE'), nullable=False)

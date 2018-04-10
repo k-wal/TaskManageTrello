@@ -56,7 +56,7 @@ def go_home(user_name):
         return render_template('home.html',sort_form=sort_form,user=User.query.get(userid),tasks=tasks)
 
     return render_template('home.html',sort_form=sort_form,user=User.query.get(userid),tasks=Task.query.filter(Task.user_id==userid))
-    
+
 @task_blueprint.route('/<user_name>/<task_id>',methods=['POST','GET'])
 @login_required
 def show_task(user_name,task_id):
@@ -147,8 +147,6 @@ def filter(user_name):
     if form.validate_on_submit():
         for task in Task.query.filter(Task.user_id==userid):
             if task.deadline >= form.deadline_start.data and task.deadline <= form.deadline_end.data:
-                tasks.append(task)        
+                tasks.append(task)
         return render_template('home.html',user=User.query.get(userid),tasks=tasks)
     return render_template('home_filter.html',form=form, user=User.query.get(userid))
-
-    

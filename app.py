@@ -16,14 +16,19 @@ from models import db, User
 import os
 from flask import request
 from werkzeug.utils import secure_filename
+from flask_uploads import UploadSet, IMAGES, configure_uploads
 
-
-basedir = os.path.abspath(os.path.dirname(__file__))
-UPLOAD_FOLDER = 'static/'
+UPLOAD_FOLDER ='static/images'
+# basedir = os.path.abspath(os.path.dirname(__file__))
+# UPLOAD_FOLDER = 'static/'
 
 app = Flask(__name__)
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+# app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config.from_object(Config)
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+#
+
 # db = SQLAlchemy(app)
 # migrate = Migrate(app, db)
 
