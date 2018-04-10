@@ -16,42 +16,56 @@
 
 </div>
 <br>
-<div clas="row">
-	<div class="col-sm-4">
-<div class="sidebar-module sidebar-module-inset">
-	<h4>Search Tasks</h4>
-	<form class="form-inline" method="GET" action="/{{user.username}}/search_tasks">	
-		<div class="form-group">
-			<input type="text" class="form-control" name="query" id="query">
-		</div>
-		<button type="submit" class="btn btn-primary">Search</button>
-	</form>
-</div>
-</div>
-<div class="row">
-	<div class="col-sm-9"></div>
-	<div class="col-sm-3">
-<form class="" action="/{{user.username}}/home" method="POST">
-                {{ sort_form.csrf_token }}
-                {% from "_formhelpers.html" import render_field %}
-                <div class="form-group">{{render_field(sort_form.criteria, class_="form-control")}}</div>
-                <input type="submit" value="Sort">
-</form>
-</div>
-</div>
-<br>
-<div class="container-fluid"><h5><b>Your tasks</b></h5></div>
-<div class="container-fluid">
-{% if tasks %}
-{% for task in tasks %}
-<div class="row">
-	<div class="col-sm-3">{{task.name}}</div>
-	<div class="col-sm-3">{{task.description}}</div>
-	<div class="col-sm-3">{{task.deadline}}</div>
-	<div class="col-sm-2"><a href="/{{user.username}}/{{task.id}}">See More Details</a></div>
 
-</div>
-{% endfor %}
-{% endif %}
+<div class="row">
+	<div class="col-sm-6">
+		<div class="sidebar-module sidebar-module-inset">
+			<h4>Search Tasks</h4>
+			<form class="form-inline" method="GET" action="/{{user.username}}/search_tasks">	
+				<div class="form-group">
+					<input type="text" class="form-control" name="query" id="query">
+				</div>
+				<button type="submit" class="btn btn-primary">Search</button>
+			</form>
+		</div>
+		<div>
+			<div class="container-fluid"><h5><b>Your tasks</b></h5></div>
+			<div class="container-fluid">
+				{% if tasks %}
+				{% for task in tasks %}
+				<div class="row">
+					<div class="col-sm-2">{{task.name}}</div>
+					<div class="col-sm-3">{{task.description}}</div>
+					<div class="col-sm-3">{{task.deadline}}</div>
+					<div class="col-sm-4"><a href="/{{user.username}}/{{task.id}}">See More Details</a></div>
+				</div>
+			{% endfor %}
+			{% endif %}
+			</div>
+		</div>
+	</div>
+	<div class="col-sm-3">
+		<form class="" action="/{{user.username}}/home" method="POST">
+            {{ sort_form.csrf_token }}
+            {% from "_formhelpers.html" import render_field %}
+            <div class="form-group">{{render_field(sort_form.criteria, class_="form-control")}}</div>
+            <input type="submit" value="Sort">
+		</form>
+	</div>
+	<div class="col-sm-3">
+		<form class="" action="/{{user.username}}/home" method="POST">
+			{{ filter_form.csrf_token }}
+			{% from "_formhelpers.html" import render_field %}
+			
+			Status:
+			<div class="form-group">{{render_field(filter_form.ongoing, class_="form-control")}}</div>
+			<div class="form-group">{{render_field(filter_form.pending, class_="form-control")}}</div>
+			<div class="form-group">{{render_field(filter_form.completed, class_="form-control")}}</div>
+			Priority:
+			<div class="form-group">{{render_field(filter_form.priority_yes, class_="form-control")}}</div>
+			<div class="form-group">{{render_field(filter_form.priority_no, class_="form-control")}}</div>
+			<input type="submit" value="Filter">
+		</form>
+	</div>
 </div>
 {% endblock %}

@@ -18,6 +18,32 @@ class TaskForm(FlaskForm):
     incentive = StringField('Incentives', validators=[Length(max=200)])
     consequences = StringField('Consequences', validators=[Length(max=200)])
 
+class FilterForm(FlaskForm):
+    deadline_start = DateField('Deadline From')
+    deadline_end = DateField('Deadline Till')
+    completed = BooleanField('Completed',default=True)
+    ongoing = BooleanField('Ongoing',default=True)
+    pending = BooleanField('Pending',default=True)
+    priority_yes = BooleanField('Priority',default=True)
+    priority_no = BooleanField('Not Priority',default=True)
+
+class SortForm(FlaskForm):
+    criteria = SelectField('Sort by:', choices=[('Deadline(near)','Deadline(near)'),('Deadline(far)','Deadline(far)'),('Name(A-Z)','Name(A-Z)'),('Name(Z-A)','Name(Z-A)')],default='Name(A-Z)')
+
+class EditTaskForm(FlaskForm):
+    deadline = DateField('Deadline', validators=[InputRequired()])
+    name = StringField('Task', validators=[InputRequired(), Length(max=100)])
+    description = StringField('Description', validators=[Length(max=200)])
+    status = SelectField('Status', choices=[('Pending', 'Pending'), ('Ongoing', 'Ongoing'), ('Completed', 'Completed')], default='Pending')
+    priority = BooleanField('Priority')
+    incentive = StringField('Incentives', validators=[Length(max=200)])
+    consequences = StringField('Consequences', validators=[Length(max=200)])
+
+class TaskDependencyForm(FlaskForm):
+    name = StringField('Task', validators=[InputRequired(), Length(max=100)])
+
+
+
 @task_blueprint.route('/<user_name>/newtask', methods = ['POST', 'GET'])
 @login_required
 def add_task(user_name):
@@ -31,14 +57,37 @@ def add_task(user_name):
     return render_template('newtask.html',form=form, username=user_name)
 
 
-class SortForm(FlaskForm):
-    criteria = SelectField('Sort by:', choices=[('Deadline(near)','Deadline(near)'),('Deadline(far)','Deadline(far)'),('Name(A-Z)','Name(A-Z)'),('Name(Z-A)','Name(Z-A)')],default='Name(A-Z)')
 
 @task_blueprint.route('/<user_name>/home',methods=['POST','GET'])
 @login_required
 def go_home(user_name):
     userid=User.query.filter(User.username==user_name).first().id
     sort_form=SortForm()
+    filter_form=FilterForm()
+    Tasks=Task.query.filter(Task.user_id==userid)
+
+    if filter_form.validate_on_submit():
+        if filter_form.completed.data == False:
+            tasks=Tasks.filter(Task.status != 'Completed')
+            Tasks=tasks
+
+        if filter_form.pending.data == False:
+            tasks=Tasks.filter(Task.status != 'Pending')
+            Tasks=tasks
+
+        if filter_form.ongoing.data == False:
+            tasks=Tasks.filter(Task.status != 'Ongoing')
+            Tasks=tasks
+
+        if filter_form.priority_yes.data == False:
+            tasks=Tasks.filter(Task.priority == False)
+            Tasks=tasks
+
+        if filter_form.priority_no.data == False:
+            tasks=Tasks.filter(Task.priority == True)
+            Tasks=tasks
+      
+      
     if sort_form.validate_on_submit():
         if sort_form.criteria.data == 'Deadline(near)':
             tasks=Task.query.filter(Task.user_id==userid).order_by(Task.deadline)
@@ -48,29 +97,23 @@ def go_home(user_name):
 
         if sort_form.criteria.data == 'Name(A-Z)':
             tasks=Task.query.filter(Task.user_id==userid).order_by(Task.name)
+            #print('****************')
+            #print(tasks)
+            #print('****************')
 
         if sort_form.criteria.data == 'Name(Z-A)':
             tasks=Task.query.filter(Task.user_id==userid).order_by(Task.name.desc())
 
 
-        return render_template('home.html',sort_form=sort_form,user=User.query.get(userid),tasks=tasks)
+        return render_template('home.html',sort_form=sort_form,user=User.query.get(userid),tasks=tasks,filter_form=filter_form)
 
-    return render_template('home.html',sort_form=sort_form,user=User.query.get(userid),tasks=Task.query.filter(Task.user_id==userid))
+    return render_template('home.html', sort_form=sort_form,filter_form=filter_form,user=User.query.get(userid),tasks=Tasks)
 
 @task_blueprint.route('/<user_name>/<task_id>',methods=['POST','GET'])
 @login_required
 def show_task(user_name,task_id):
     userid=User.query.filter(User.username==user_name).first().id
     return render_template('showtask.html',user=User.query.get(userid),task=Task.query.get(task_id),task_id=task_id)
-
-class EditTaskForm(FlaskForm):
-    deadline = DateField('Deadline', validators=[InputRequired()])
-    name = StringField('Task', validators=[InputRequired(), Length(max=100)])
-    description = StringField('Description', validators=[Length(max=200)])
-    status = SelectField('Status', choices=[('Pending', 'Pending'), ('Ongoing', 'Ongoing'), ('Completed', 'Completed')], default='Pending')
-    priority = BooleanField('Priority')
-    incentive = StringField('Incentives', validators=[Length(max=200)])
-    consequences = StringField('Consequences', validators=[Length(max=200)])
 
 
 @task_blueprint.route('/<user_name>/<task_id>/edit',methods=['POST','GET'])
@@ -102,8 +145,6 @@ def delete_task(user_name,task_id):
     db.session.delete(Task.query.get(task_id))
     db.session.commit()
     return render_template('task_deleted.html',username=user_name)
-class TaskDependencyForm(FlaskForm):
-    name = StringField('Task', validators=[InputRequired(), Length(max=100)])
 
 @task_blueprint.route('/<user_name>/<task_id>/dependency',methods=['POST','GET'])
 @login_required
@@ -130,23 +171,9 @@ def search_tasks(user_name):
     for task in Tasks:
         if to_search in task.name or to_search in task.description:
             tasks.append(task)
-    return render_template('home.html',user=user,tasks=tasks)
 
-class FilterForm(FlaskForm):
-    deadline_start = DateField('Deadline From')
-    deadline_end = DateField('Deadline Till')
-    status = SelectField('Status', choices=[('Pending', 'Pending'), ('Ongoing', 'Ongoing'), ('Completed', 'Completed')])
-    priority = BooleanField('Priority')
+    sort_form=SortForm()
+    filter_form=FilterForm()
+    Tasks=tasks
+    return render_template('home.html', sort_form=sort_form,user=user,tasks=Tasks,filter_form=filter_form)
 
-@task_blueprint.route('/<user_name>/filter/choose')
-@login_required
-def filter(user_name):
-    userid=User.query.filter(User.username==user_name).first().id
-    form=FilterForm()
-    tasks=[]
-    if form.validate_on_submit():
-        for task in Task.query.filter(Task.user_id==userid):
-            if task.deadline >= form.deadline_start.data and task.deadline <= form.deadline_end.data:
-                tasks.append(task)
-        return render_template('home.html',user=User.query.get(userid),tasks=tasks)
-    return render_template('home_filter.html',form=form, user=User.query.get(userid))
