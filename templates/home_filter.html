@@ -28,15 +28,22 @@
 	</form>
 </div>
 </div>
-<div class="row">
-	<div class="col-sm-9"></div>
-	<div class="col-sm-3">
-<form class="" action="/{{user.username}}/home" method="POST">
-                {{ sort_form.csrf_token }}
+<div class="col-sm-4">
+<div class="container row">
+        <div class="col-sm-4"></div>
+        <div class="col-sm-4">
+            <form class="" action="/{{user.username}}/filter/choose" method="POST">
+                {{ form.csrf_token }}
                 {% from "_formhelpers.html" import render_field %}
-                <div class="form-group">{{render_field(sort_form.criteria, class_="form-control")}}</div>
-                <input type="submit" value="Sort">
-</form>
+                <div class="form-group">{{render_field(form.deadline_start, class_="form-control")}}</div>
+                <div class="form-group">{{render_field(form.deadline_end, class_="form-control")}}</div>
+                <div class="form-group">{{render_field(form.priority, class_="form-control")}}</div>
+                <div class="form-group">{{render_field(form.status, class_="form-control")}}</div>
+                <input type="submit" value="Submit">
+            </form>
+        </div>
+        <div class="col-sm-4"></div>
+    </div>
 </div>
 </div>
 <br>
