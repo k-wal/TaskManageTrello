@@ -4,7 +4,7 @@ from wtforms import StringField, PasswordField, BooleanField, SelectField
 from wtforms.fields.html5 import DateField
 from wtforms.validators import Email, EqualTo, Length, Required, InputRequired
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
-from models import db, User, Task
+from models import db, User, Task, List
 
 task_blueprint = Blueprint('task_blueprint', __name__)
 
@@ -44,17 +44,18 @@ class TaskDependencyForm(FlaskForm):
 
 
 
-@task_blueprint.route('/<user_name>/newtask', methods = ['POST', 'GET'])
+@task_blueprint.route('/<user_name>/list/<list_id>/newtask', methods = ['POST', 'GET'])
 @login_required
-def add_task(user_name):
+def add_task(user_name, list_id):
     userid=User.query.filter(User.username==user_name).first().id
     form=TaskForm()
     if form.validate_on_submit():
-        new_task = Task(user_id=userid,deadline=form.deadline.data,name=form.name.data,description=form.description.data,status=form.status.data,priority=form.priority.data,incentive=form.incentive.data,consequences=form.consequences.data)
+        new_task = Task(user_id=userid,deadline=form.deadline.data,name=form.name.data,description=form.description.data,status=form.status.data,priority=form.priority.data,incentive=form.incentive.data,consequences=form.consequences.data,list_id=list_id)
+        print(new_task)
         db.session.add(new_task)
         db.session.commit()
         return redirect("/"+user_name+"/home")
-    return render_template('newtask.html',form=form, username=user_name)
+    return render_template('newtask.html',form=form, username=user_name, list_id=list_id)
 
 
 
@@ -65,6 +66,8 @@ def go_home(user_name):
     sort_form=SortForm()
     filter_form=FilterForm()
     Tasks=Task.query.filter(Task.user_id==userid)
+    print(Tasks)
+    lists = List.query.filter(List.user_id==userid)
 
     if filter_form.validate_on_submit():
         if filter_form.completed.data == False:
@@ -86,8 +89,8 @@ def go_home(user_name):
         if filter_form.priority_no.data == False:
             tasks=Tasks.filter(Task.priority == True)
             Tasks=tasks
-      
-      
+
+
     if sort_form.validate_on_submit():
         if sort_form.criteria.data == 'Deadline(near)':
             tasks=Task.query.filter(Task.user_id==userid).order_by(Task.deadline)
@@ -105,9 +108,9 @@ def go_home(user_name):
             tasks=Task.query.filter(Task.user_id==userid).order_by(Task.name.desc())
 
 
-        return render_template('home.html',sort_form=sort_form,user=User.query.get(userid),tasks=tasks,filter_form=filter_form)
+        return render_template('home.html',sort_form=sort_form,user=User.query.get(userid),tasks=tasks,filter_form=filter_form, lists=lists)
 
-    return render_template('home.html', sort_form=sort_form,filter_form=filter_form,user=User.query.get(userid),tasks=Tasks)
+    return render_template('home.html', sort_form=sort_form,filter_form=filter_form,user=User.query.get(userid),tasks=Tasks,lists=lists)
 
 @task_blueprint.route('/<user_name>/<task_id>',methods=['POST','GET'])
 @login_required
@@ -176,4 +179,3 @@ def search_tasks(user_name):
     filter_form=FilterForm()
     Tasks=tasks
     return render_template('home.html', sort_form=sort_form,user=user,tasks=Tasks,filter_form=filter_form)
-

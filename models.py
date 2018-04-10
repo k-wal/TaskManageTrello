@@ -52,6 +52,14 @@ class User(UserMixin, db.Model):
         cascade="all, delete-orphan",
         passive_deletes=True
     )
+
+    lists = db.relationship(
+        'List',
+        backref=db.backref('user', lazy='joined'),
+        cascade="all, delete-orphan",
+        passive_deletes=True
+    )
+
     def set_password(self, secret):
         self.password = generate_password_hash(secret)
 
@@ -112,6 +120,7 @@ class Task(db.Model):
     priority = db.Column('priority', db.Boolean, nullable=False, default=False)
     incentive = db.Column('incentive', db.String(200))
     consequences = db.Column('consequences', db.String(200))
+    list_id = db.Column('list_id', db.Integer, db.ForeignKey('list.list_id', ondelete='CASCADE'), nullable=False)
 
     dependent = db.relationship(
     'Task', secondary=dependent_tasks,
@@ -154,8 +163,14 @@ class Task(db.Model):
         return self.serialize().__repr__()
 
 class List(db.Model):
-    id = db.Column('task_id', db.Integer, primary_key=True, autoincrement=True)
+    id = db.Column('list_id', db.Integer, primary_key=True, autoincrement=True)
     create_time = db.Column('create_time', db.DateTime, default=datetime.utcnow)
+    user_id = db.Column('user_id', db.Integer, db.ForeignKey('user', ondelete='CASCADE'), nullable=False)
     name = db.Column('name', db.String(100), nullable=False)
     description = db.Column('description', db.String(200))
-    user_id = db.Column('user_id', db.Integer, db.ForeignKey('user', ondelete='CASCADE'), nullable=False)
+    tasks = db.relationship(
+            'Task',
+            backref= db.backref('list', lazy='joined'),
+            cascade="all, delete-orphan",
+            passive_deletes=True
+        )

@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="row"><h1>{{list.name}}</h1></div>
+<div class="row"><h2>{{list.description}}</h2></div>
+<div class="row">Created on {{list.create_time}}</div>
+<div class="row">Created by {{user.username}}</div>
+<div>
+    <div class="container-fluid"><h5><b>Your tasks</b></h5></div>
+    <div class="container-fluid">
+        {% if tasks %}
+        {% for task in tasks %}
+        <div class="row">
+            <div class="col-sm-2">{{task.name}}</div>
+            <div class="col-sm-3">{{task.description}}</div>
+            <div class="col-sm-3">{{task.deadline}}</div>
+            <div class="col-sm-4"><a href="/{{user.username}}/{{task.id}}">See More Details</a></div>
+        </div>
+    {% endfor %}
+    {% endif %}
+    </div>
+</div>
+<div class="row">
+	<div class="col-sm-4"><a href="/{{user.username}}/list/{{list.id}}/edit">Edit</a></div>
+	<div class="col-sm-4"><a href="/{{user.username}}/list/{{list.id}}/delete">Delete</a></div>
+	<div class="col-sm-4"><a href="/{{user.username}}/list/{{list.id}}/newtask">Add Task</a></div>
+</div>
+<div class="row">
+	Are you sure you want to delete this list?
+</div>
+<div class="row">
+<div class="col-sm-4"><a href="/{{user.username}}/list/{{list_id}}/list_deleted">Yes</a></div>
+<div class="col-sm-4"><a href="/{{user.username}}/{{task_id}}">No</a></div>
+</div>
+{% endblock %}

@@ -25,10 +25,6 @@ def upload_file(user_name):
             return redirect(request.url)
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
-            print('@@@@@@@')
-            print('@@@@@@@')
-            print('@@@@@@@')
-            print(filename)
             newname = str(uuid.uuid4())+filename
             file.save('static/images/'+newname)
             current_user.profile_picture_filename = '../static/images/'+newname

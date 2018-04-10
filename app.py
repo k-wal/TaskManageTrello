@@ -7,6 +7,7 @@ from flask_migrate import Migrate
 from api.user_registration import user_blueprint
 from api.upload_profile_images import image_blueprint
 from api.add_task import task_blueprint
+from api.lists import list_blueprint
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField
 from wtforms.fields.html5 import DateField
@@ -36,6 +37,7 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 # app.register_blueprint(user_blueprint)
 app.register_blueprint(task_blueprint)
 app.register_blueprint(image_blueprint)
+app.register_blueprint(list_blueprint)
 
 login_manager = LoginManager()
 login_manager.init_app(app)
