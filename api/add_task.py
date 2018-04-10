@@ -30,12 +30,33 @@ def add_task(user_name):
         return redirect("/"+user_name+"/home")
     return render_template('newtask.html',form=form, username=user_name)
 
+
+class SortForm(FlaskForm):
+    criteria = SelectField('Sort by:', choices=[('Deadline(near)','Deadline(near)'),('Deadline(far)','Deadline(far)'),('Name(A-Z)','Name(A-Z)'),('Name(Z-A)','Name(Z-A)')],default='Name(A-Z)')
+
 @task_blueprint.route('/<user_name>/home',methods=['POST','GET'])
 @login_required
 def go_home(user_name):
     userid=User.query.filter(User.username==user_name).first().id
-    return render_template('home.html',user=User.query.get(userid),tasks=Task.query.filter(Task.user_id==userid))
+    sort_form=SortForm()
+    if sort_form.validate_on_submit():
+        if sort_form.criteria.data == 'Deadline(near)':
+            tasks=Task.query.filter(Task.user_id==userid).order_by(Task.deadline)
 
+        if sort_form.criteria.data == 'Deadline(far)':
+            tasks=Task.query.filter(Task.user_id==userid).order_by(Task.deadline.desc())
+
+        if sort_form.criteria.data == 'Name(A-Z)':
+            tasks=Task.query.filter(Task.user_id==userid).order_by(Task.name)
+
+        if sort_form.criteria.data == 'Name(Z-A)':
+            tasks=Task.query.filter(Task.user_id==userid).order_by(Task.name.desc())
+
+
+        return render_template('home.html',sort_form=sort_form,user=User.query.get(userid),tasks=tasks)
+
+    return render_template('home.html',sort_form=sort_form,user=User.query.get(userid),tasks=Task.query.filter(Task.user_id==userid))
+    
 @task_blueprint.route('/<user_name>/<task_id>',methods=['POST','GET'])
 @login_required
 def show_task(user_name,task_id):
@@ -110,3 +131,24 @@ def search_tasks(user_name):
         if to_search in task.name or to_search in task.description:
             tasks.append(task)
     return render_template('home.html',user=user,tasks=tasks)
+
+class FilterForm(FlaskForm):
+    deadline_start = DateField('Deadline From')
+    deadline_end = DateField('Deadline Till')
+    status = SelectField('Status', choices=[('Pending', 'Pending'), ('Ongoing', 'Ongoing'), ('Completed', 'Completed')])
+    priority = BooleanField('Priority')
+
+@task_blueprint.route('/<user_name>/filter/choose')
+@login_required
+def filter(user_name):
+    userid=User.query.filter(User.username==user_name).first().id
+    form=FilterForm()
+    tasks=[]
+    if form.validate_on_submit():
+        for task in Task.query.filter(Task.user_id==userid):
+            if task.deadline >= form.deadline_start.data and task.deadline <= form.deadline_end.data:
+                tasks.append(task)        
+        return render_template('home.html',user=User.query.get(userid),tasks=tasks)
+    return render_template('home_filter.html',form=form, user=User.query.get(userid))
+
+    
