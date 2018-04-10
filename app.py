@@ -19,7 +19,7 @@ from werkzeug.utils import secure_filename
 
 
 basedir = os.path.abspath(os.path.dirname(__file__))
-UPLOAD_FOLDER = basedir+'/uploads'
+UPLOAD_FOLDER = 'static/'
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
@@ -162,7 +162,7 @@ def search_tasks(user_name):
     Users=User.query.all()
     for user in Users:
         print(user.name)
-        if user.username is not user_name: 
+        if user.username is not user_name:
             if to_search in user.name or to_search in user.username:
                 users.append(user)
     return render_template('follow.html',users=users,username=user_name,following=following)
@@ -177,7 +177,7 @@ def follow_user(user_name,to_follow):
     current_user.follow(user)
     db.session.commit()
     return render_template('now_following_message.html',username=user_name,user=user)
- 
+
 @app.route('/<user_name>/following', methods = ['POST', 'GET'])
 @login_required
 def following(user_name):

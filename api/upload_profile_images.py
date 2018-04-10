@@ -35,10 +35,16 @@ def upload_file(user_name):
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
             filename = current_user.username + '.' + filename.rsplit('.', 1)[1].lower()
-            if os.path.isfile(os.path.join(app.config['UPLOAD_FOLDER'], filename)):
+            print('before')
+            print(os.path.isfile(os.path.join(app.config['UPLOAD_FOLDER'], filename)))
+            if os.path.exists(os.path.join(app.config['UPLOAD_FOLDER'], filename)):
                 os.remove(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            current_user.profile_picture = 'uploads/' + filename
+            print('after')
+            print(os.path.exists(os.path.join(app.config['UPLOAD_FOLDER'], filename)))
+            print(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            current_user.profile_picture = 'static/'+filename
+            file.save(current_user.profile_picture)
+            # file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             db.session.commit()
             return redirect(url_for('task_blueprint.go_home', user_name=current_user.username))
     return '''
