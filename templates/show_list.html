@@ -15,7 +15,7 @@
             <div class="col-sm-2">{{task.name}}</div>
             <div class="col-sm-3">{{task.description}}</div>
             <div class="col-sm-3">{{task.deadline}}</div>
-            <div class="col-sm-4"><a href="/{{user.username}}/{{task.id}}">See More Details</a></div>
+            <div class="col-sm-4"><a href="/{{user.username}}/list/{{list.id}}/task/{{task.id}}">See More Details</a></div>
         </div>
     {% endfor %}
     {% endif %}

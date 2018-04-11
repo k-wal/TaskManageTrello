@@ -27,8 +27,8 @@
 	<div class="col-sm-4">Status:</div><div class="col-sm-4">{{task.status}}</div>
 </div>
 <div class="row">
-	<div class="col-sm-4"><a href="/{{user.username}}/{{task.id}}/edit">Edit</a></div>
-	<div class="col-sm-4"><a href="/{{user.username}}/{{task.id}}/delete">Delete</a></div>
-	<div class="col-sm-4"><a href="/{{user.username}}/{{task.id}}/dependency">Add Dependency</a></div>
+	<div class="col-sm-4"><a href="/{{user.username}}/list/{{list_id}}/task/{{task.id}}/edit">Edit</a></div>
+	<div class="col-sm-4"><a href="/{{user.username}}/list/{{list_id}}/task/{{task.id}}/delete">Delete</a></div>
+	<div class="col-sm-4"><a href="/{{user.username}}/list/{{list_id}}/task/{{task.id}}/dependency">Add Dependency</a></div>
 </div>
 {% endblock %}

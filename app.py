@@ -157,8 +157,6 @@ def go_to_follow(user_name):
     following = current_user.all_followed()
     return render_template('follow.html',users=[],username=user_name,following=following)
 
-
-
 @app.route('/<user_name>/follow/search_users')
 @login_required
 def search_tasks(user_name):
