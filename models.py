@@ -19,13 +19,12 @@ followers = db.Table('followers',
     db.Column('followed_id', db.Integer, db.ForeignKey('user.user_id')),
 )
 
-# class Friends(Base):
-#     __tablename__ = 'friends'
-#     user_id = db.Column(db.Integer, ForeignKey('user.user_id'), primary_key=True)
-#     friend_id = db.Column(db.Integer, ForeignKey('user.user_id'), primary_key=True)
-#     request_status = db.Column(db.Boolean, unique=False, default=False)
-#     user = db.relationship('User', foreign_keys='Friend.user_id')
-#     friend = db.relationship('User', foreign_keys='Friend.friend_id')
+class Friends(Base):
+    __tablename__ = 'friends'
+    user_id = db.Column(db.Integer, ForeignKey('user.user_id'), primary_key=True)
+    friend_id = db.Column(db.Integer, ForeignKey('user.user_id'), primary_key=True)
+    request_status = db.Column(db.Boolean, unique=False, default=False)
+
 
 class User(UserMixin, db.Model):
     # __tablename__ = 'user-table'
