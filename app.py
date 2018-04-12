@@ -282,6 +282,12 @@ def decline_friend_request(user_name, friend_id):
     db.session.commit()
     return redirect(url_for('show_friend_requests', user_name=user_name))
 
+@app.route("/<user_name>/friends")
+@login_required
+def show_friends(user_name):
+    following = current_user.all_followed()
+    return render_template('following.html',following=following,username=user_name)
+
 @app.route("/<user_name>/unfriend=<friend_id>", methods=['GET','POST'])
 @login_required
 def unfriend(user_name,friend_id):
@@ -289,7 +295,7 @@ def unfriend(user_name,friend_id):
     current_user.unfollow(user)
     user.unfollow(current_user)
     db.session.commit()
-    return 'unfriend'
+    return redirect(url_for('show_friends', user_name=user_name))
 
 ############################
 
