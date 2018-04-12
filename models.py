@@ -173,3 +173,9 @@ class List(db.Model):
             cascade="all, delete-orphan",
             passive_deletes=True
         )
+
+shared_lists = db.Table('shared_lists',
+    db.Column('list_id', db.Integer, db.ForeignKey('list.list_id')),
+    db.Column('user_id', db.Integer, db.ForeignKey('user.user_id')),
+)
+

@@ -13,7 +13,7 @@ from wtforms import StringField, PasswordField, BooleanField
 from wtforms.fields.html5 import DateField
 from wtforms.validators import Email, EqualTo, Length, Required, InputRequired
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
-from models import db, User
+from models import db, User, Task, List
 import os
 from flask import request
 from werkzeug.utils import secure_filename
@@ -157,8 +157,6 @@ def go_to_follow(user_name):
     following = current_user.all_followed()
     return render_template('follow.html',users=[],username=user_name,following=following)
 
-
-
 @app.route('/<user_name>/follow/search_users')
 @login_required
 def search_tasks(user_name):
@@ -191,6 +189,32 @@ def following(user_name):
     following = current_user.all_followed()
     return render_template('following.html',following=following,username=user_name)
 
+class TempListChangeForm(FlaskForm):
+    new_list = StringField('New List',validators=[InputRequired()])
+
+@app.route('/<user_name>/list/<list_id>/task/<task_id>/shift_lists',methods=['POST','GET'])
+@login_required
+def shift_lists(user_name,task_id,list_id):
+    userid=User.query.filter(User.username==user_name).first().id
+    current_task=Task.query.get(task_id)
+    current_list=List.query.get(list_id)
+    all_lists=List.query.filter(List.user_id == userid)
+    form=TempListChangeForm(new_list=current_list.name)
+    if form.validate_on_submit():
+        current_task.list_id = List.query.filter(List.name == form.new_list.data).first().id
+        db.session.commit() 
+        return redirect("/"+user_name+"/list/"+str(current_task.list_id)+"/task/"+task_id)
+    return render_template('shift_task_to_list.html',form=form, username=user_name,task_id=task_id,list_id=list_id,task=current_task,list=current_list,all_lists=all_lists)
+
+@app.route('/<user_name>/try_search_jquery',methods=['POST','GET'])
+@login_required
+def jquery_search(user_name):   
+    user_id = current_user.id
+    availableTags=[]
+    for task in Task.query.filter(Task.user_id == user_id):
+        availableTags.append(task.name)
+    print(availableTags)
+    return render_template('auto.html',availableTags=availableTags)
 
 
 ### ENDS here
