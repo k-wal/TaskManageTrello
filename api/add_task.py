@@ -54,6 +54,7 @@ def add_task(user_name, list_id):
         print(new_task)
         db.session.add(new_task)
         db.session.commit()
+        new_task.set_relpriority()
         return redirect("/"+user_name+"/list/"+list_id)
     return render_template('newtask.html',form=form, username=user_name, list_id=list_id)
 
@@ -179,4 +180,16 @@ def search_tasks(user_name):
     Tasks=tasks
     return render_template('home.html', sort_form=sort_form,user=user,tasks=Tasks,filter_form=filter_form)
 
-
+@task_blueprint.route('/<user_name>/list/<list_id>/reorder=<task1_id>-<task2_id>')
+@login_required
+def reorder_tasks(user_name, task1_id, task2_id, list_id):
+    task1 = Task.query.get(task1_id)
+    task2 = Task.query.get(task2_id)
+    if task1.list_id != task2.list_id:
+        return '<h1>Tasks do not belong to same list</h1>'
+    else:
+        temp = task1.relpriority
+        task1.relpriority = task2.relpriority
+        task2.relpriority = temp
+        db.session.commit()
+    return redirect(url_for('list_blueprint.show_list',user_name=user_name, list_id=list_id))

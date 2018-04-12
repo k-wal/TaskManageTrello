@@ -3,6 +3,8 @@ from datetime import datetime
 from flask_login import UserMixin
 from flask_sqlalchemy import SQLAlchemy, event
 from sqlalchemy import engine
+from sqlalchemy.schema import Sequence
+
 
 db = SQLAlchemy()
 
@@ -133,6 +135,7 @@ class Task(db.Model):
     status = db.Column('status', db.Enum(
         *['Pending', 'Ongoing', 'Completed']), nullable=False, default='Pending')
     priority = db.Column('priority', db.Boolean, nullable=False, default=False)
+    relpriority =  db.Column('relpriority', db.Integer)
     incentive = db.Column('incentive', db.String(200))
     consequences = db.Column('consequences', db.String(200))
     list_id = db.Column('list_id', db.Integer, db.ForeignKey('list.list_id', ondelete='CASCADE'), nullable=False)
@@ -142,6 +145,10 @@ class Task(db.Model):
     primaryjoin=(dependent_tasks.c.task_id == id),
     secondaryjoin=(dependent_tasks.c.dependent_id == id),
     backref=db.backref('dependent_tasks', lazy='dynamic'), lazy='dynamic')
+
+    def set_relpriority(self):
+        self.relpriority = self.id
+        db.session.commit()
 
     def all_dependent(self):
         return self.dependent.all()

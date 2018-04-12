@@ -37,7 +37,7 @@ def make_new_list(user_name):
 def show_list(user_name,list_id):
     userid=User.query.filter(User.username==user_name).first().id
     current_list = List.query.get(list_id)
-    tasks=Task.query.filter(Task.list_id==list_id)
+    tasks=Task.query.filter(Task.list_id==list_id).order_by(Task.relpriority)
     return render_template('show_list.html',user=current_user,list=List.query.get(list_id), list_id=list_id,tasks=tasks)
 
 @list_blueprint.route('/<user_name>/list/<list_id>/list_update', methods=['POST', 'GET'])
@@ -68,7 +68,7 @@ def delete_list(user_name,list_id):
 
 class TempAddUserForm(FlaskForm):
     add_user = StringField('Add User :',validators=[InputRequired()])
-    
+
 @list_blueprint.route('/<user_name>/list/<list_id>/add_user',methods=['POST','GET'])
 @login_required
 def add_user(user_name,list_id):
@@ -88,4 +88,3 @@ def show_shared_lists(user_name):
     user = User.query.filter(User.username == user_name).first()
     all_lists = user.return_all_lists()
     return render_template('show_shared_lists.html',user=user,all_lists=all_lists)
-
