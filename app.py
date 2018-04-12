@@ -18,7 +18,7 @@ import os
 from flask import request
 from werkzeug.utils import secure_filename
 from flask_uploads import UploadSet, IMAGES, configure_uploads
-from api.friends import is_friends_or_pending, get_friend_requests,get_friends
+from api.friends import is_friends_or_pending, get_friend_requests,get_friends, get_recieved_requests
 
 UPLOAD_FOLDER ='static/images'
 # basedir = os.path.abspath(os.path.dirname(__file__))
@@ -160,7 +160,7 @@ def go_to_follow(user_name):
 
 @app.route('/<user_name>/follow/search_users')
 @login_required
-def search_tasks(user_name):
+def search_users(user_name):
     to_search=request.args.get('query')
     following = current_user.all_followed()
     print(to_search)
@@ -226,6 +226,7 @@ class FriendForm(FlaskForm):
     username = StringField('username',validators=[InputRequired(), Length(max=20)])
 
 @app.route("/<user_name>/add-friend", methods=['GET','POST'])
+@login_required
 def add_friend(user_name):
 
     form = FriendForm()
@@ -234,11 +235,11 @@ def add_friend(user_name):
         user_b = User.query.filter_by(username = form.username.data).first()
         user_b_id = user_b.id
         # Check connection status between user_a and user_b
-        is_friends, is_pending = is_friends_or_pending(user_a_id, user_b_id)
+        is_friends, is_pending, is_friends_reverse = is_friends_or_pending(user_a_id, user_b_id)
 
         if user_a_id == user_b_id:
             return "You cannot add yourself as a friend."
-        elif is_friends:
+        elif is_friends or is_friends_reverse:
             return "You are already friends."
         elif is_pending:
             return "Your friend request is pending."
@@ -251,6 +252,45 @@ def add_friend(user_name):
             print ("User ID %s has sent a friend request to User ID %s" % (user_a_id, user_b_id))
             return "Request Sent"
     return render_template('friend_form.html', form=form, users = User.query.all(), username = user_name)
+
+
+@app.route("/<user_name>/friend_requests", methods=['GET','POST'])
+@login_required
+def show_friend_requests(user_name):
+    received_friend_requests = get_recieved_requests(current_user.id)
+    return render_template('friend_requests.html', friendrequests=received_friend_requests, user_name=user_name)
+
+@app.route("/<user_name>/accept=<friend_id>", methods=['GET','POST'])
+@login_required
+def accept_friend_request(user_name, friend_id):
+    user_a_id = friend_id
+    user_b_id = current_user.id;
+    relation = db.session.query(Connection).filter(Connection.user_a_id == user_a_id, Connection.user_b_id == user_b_id).first()
+    relation.status = 'Accepted'
+    user = User.query.get(user_a_id)
+    current_user.follow(user)
+    user.follow(current_user)
+    db.session.commit()
+    return redirect(url_for('show_friend_requests', user_name=user_name))
+
+@app.route("/<user_name>/decline=<friend_id>", methods=['GET','POST'])
+@login_required
+def decline_friend_request(user_name, friend_id):
+    user_a_id = friend_id
+    user_b_id = current_user.id;
+    db.session.query(Connection).filter(Connection.user_a_id == user_a_id, Connection.user_b_id == user_b_id).delete()
+    db.session.commit()
+    return redirect(url_for('show_friend_requests', user_name=user_name))
+
+@app.route("/<user_name>/unfriend=<friend_id>", methods=['GET','POST'])
+@login_required
+def unfriend(user_name,friend_id):
+    user = User.query.get(friend_id)
+    current_user.unfollow(user)
+    user.unfollow(current_user)
+    db.session.commit()
+    return 'unfriend'
+
 ############################
 
 if __name__ == '__main__':

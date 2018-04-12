@@ -19,6 +19,25 @@ followers = db.Table('followers',
     db.Column('followed_id', db.Integer, db.ForeignKey('user.user_id')),
 )
 
+shared_lists = db.Table('shared_lists',
+    db.Column('list_id', db.Integer, db.ForeignKey('list.list_id')),
+    db.Column('user_id', db.Integer, db.ForeignKey('user.user_id')),
+)
+
+# class Friends(Base):
+#     __tablename__ = 'friends'
+#     user_id = db.Column(db.Integer, ForeignKey('user.user_id'), primary_key=True)
+#     friend_id = db.Column(db.Integer, ForeignKey('user.user_id'), primary_key=True)
+#     request_status = db.Column(db.Boolean, unique=False, default=False)
+#     user = db.relationship('User', foreign_keys='Friend.user_id')
+#     friend = db.relationship('User', foreign_keys='Friend.friend_id')
+'''
+class Friends(Base):
+    __tablename__ = 'friends'
+    user_id = db.Column(db.Integer, ForeignKey('user.user_id'), primary_key=True)
+    friend_id = db.Column(db.Integer, ForeignKey('user.user_id'), primary_key=True)
+    request_status = db.Column(db.Boolean, unique=False, default=False)
+'''
 
 class User(UserMixin, db.Model):
     # __tablename__ = 'user-table'
@@ -73,6 +92,9 @@ class User(UserMixin, db.Model):
     def is_following(self, user):
         return self.followed.filter(
             followers.c.followed_id == user.id).count() > 0
+
+    def return_all_lists(self):
+        return self.all_lists.all()
 
     def serialize(self):
         return {
@@ -167,6 +189,22 @@ class List(db.Model):
             cascade="all, delete-orphan",
             passive_deletes=True
         )
+    all_users = db.relationship(
+    'User', secondary=shared_lists,
+    backref=db.backref('all_lists', lazy='dynamic'), lazy='dynamic')
+
+    def return_all_users(self):
+        return self.all_users.all()
+
+    def is_user(self,cur_user):
+        return self.all_users.filter(User.id == cur_user.id).count() > 0
+
+    def add_user(self,cur_user):
+        if not self.is_user(cur_user):
+            self.all_users.append(cur_user)
+
+
+
 
 # shared_lists = db.Table('shared_lists',
 #     db.Column('list_id', db.Integer, db.ForeignKey('list.list_id')),

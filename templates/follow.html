@@ -12,7 +12,7 @@
 
     <div class="sidebar-module sidebar-module-inset">
     <h4>Search Users to Follow</h4>
-    <form class="form-inline" method="GET" action="/{{username}}/follow/search_users">    
+    <form class="form-inline" method="GET" action="/{{username}}/follow/search_users">
         <div class="form-group">
             <input type="text" class="form-control" name="query" id="query">
         </div>
@@ -32,6 +32,6 @@
     {% endfor %}
     {% endif %}
     <div><a href="/{{username}}/following">See who you're following</a></div>
-    
+
 </div>
 {% endblock %}

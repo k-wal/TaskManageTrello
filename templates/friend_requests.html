@@ -18,10 +18,10 @@
 	<div class="col-sm-4">{{user.name}}</div>
 	<div class="col-sm-4">{{user.username}}</div>
     <div class="col-sm-2">
-        <a href="#">Accept</a>
+        <a href="/{{user_name}}/accept={{user.id}}">Accept</a>
     </div>
     <div class="col-sm-2">
-        <a href="#">Decline</a>
+        <a href="/{{user_name}}/decline={{user.id}}">Decline</a>
     </div>
 </div>
 {% endfor %}

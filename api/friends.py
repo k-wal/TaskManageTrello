@@ -15,13 +15,20 @@ def is_friends_or_pending(user_a_id, user_b_id):
     is_friends = db.session.query(Connection).filter(Connection.user_a_id == user_a_id,
                                                      Connection.user_b_id == user_b_id,
                                                      Connection.status == "Accepted").first()
+    is_friends_reverse = db.session.query(Connection).filter(Connection.user_a_id == user_b_id,
+                                                     Connection.user_b_id == user_a_id,
+                                                     Connection.status == "Accepted").first()
 
     is_pending = db.session.query(Connection).filter(Connection.user_a_id == user_a_id,
                                                      Connection.user_b_id == user_b_id,
                                                      Connection.status == "Requested").first()
 
-    return is_friends, is_pending
+    return is_friends, is_pending, is_friends_reverse
 
+def get_recieved_requests(user_id):
+    received_friend_requests = db.session.query(User).filter(Connection.user_b_id == user_id,
+                                                                 Connection.status == "Requested").join(Connection,Connection.user_a_id == User.id).all()
+    return received_friend_requests
 
 def get_friend_requests(user_id):
     """
@@ -33,11 +40,11 @@ def get_friend_requests(user_id):
 
     received_friend_requests = db.session.query(User).filter(Connection.user_b_id == user_id,
                                                              Connection.status == "Requested").join(Connection,
-                                                                                                    Connection.user_a_id == User.user_id).all()
+                                                                                                    Connection.user_a_id == User.id).all()
 
     sent_friend_requests = db.session.query(User).filter(Connection.user_a_id == user_id,
                                                          Connection.status == "Requested").join(Connection,
-                                                                                                Connection.user_b_id == User.user_id).all()
+                                                                                                Connection.user_b_id == User.id).all()
 
     return received_friend_requests, sent_friend_requests
 
