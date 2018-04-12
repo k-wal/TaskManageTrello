@@ -225,34 +225,32 @@ def jquery_search(user_name):
 class FriendForm(FlaskForm):
     username = StringField('username',validators=[InputRequired(), Length(max=20)])
 
-@app.route("/<user_name>/add-friend", methods=['GET','POST'])
+@app.route("/<user_name>/add_friend=<to_friend>", methods=['GET','POST'])
 @login_required
-def add_friend(user_name):
+def add_friend(user_name,to_friend):
 
-    form = FriendForm()
     user_a_id = current_user.id
-    if form.validate_on_submit():
-        user_b = User.query.filter_by(username = form.username.data).first()
-        user_b_id = user_b.id
-        # Check connection status between user_a and user_b
-        is_friends, is_pending, is_friends_reverse = is_friends_or_pending(user_a_id, user_b_id)
+    user_b = User.query.filter_by(username = to_friend).first()
+    user_b_id = user_b.id
+       # Check connection status between user_a and user_b
+    is_friends, is_pending, is_friends_reverse = is_friends_or_pending(user_a_id, user_b_id)
 
-        if user_a_id == user_b_id:
-            return "You cannot add yourself as a friend."
-        elif is_friends or is_friends_reverse:
-            return "You are already friends."
-        elif is_pending:
-            return "Your friend request is pending."
-        else:
-            requested_connection = Connection(user_a_id=user_a_id,
-                                              user_b_id=user_b_id,
-                                              status="Requested")
-            db.session.add(requested_connection)
-            db.session.commit()
-            print ("User ID %s has sent a friend request to User ID %s" % (user_a_id, user_b_id))
-            return "Request Sent"
-    return render_template('friend_form.html', form=form, users = User.query.all(), username = user_name)
-
+    if user_a_id == user_b_id:
+        return render_template('now_following_message.html',message='You cannot add yourself as a friend.',user_name=user_name,user=user_b)
+    elif is_friends or is_friends_reverse:
+        return render_template('now_following_message.html',message='You are already friends.',user_name=user_name,user=user_b)
+    elif is_pending:
+        return render_template('now_following_message.html',message='Your friend request is pending.',user_name=user_name,user=user_b)
+       
+    else:
+        requested_connection = Connection(user_a_id=user_a_id,
+                                          user_b_id=user_b_id,
+                                          status="Requested")
+        db.session.add(requested_connection)
+        db.session.commit()
+        print ("User ID %s has sent a friend request to User ID %s" % (user_a_id, user_b_id))
+        return render_template('now_following_message.html',message='Request sent.',user_name=user_name,user=user_b)
+    
 
 @app.route("/<user_name>/friend_requests", methods=['GET','POST'])
 @login_required
