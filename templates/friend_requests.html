@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-sm-3"></div>
+        <div class="col-sm-6 caption1 align="center"">
+            <h1>My Requests</h1>
+        </div>
+        <div class="col-sm-3"></div>
+    </div>
+
+</div>
+<div class="container-fluid">
+{% if friendrequests %}
+{% for user in friendrequests %}
+<div class="row">
+	<div class="col-sm-4">{{user.name}}</div>
+	<div class="col-sm-4">{{user.username}}</div>
+    <div class="col-sm-2">
+        <a href="#">Accept</a>
+    </div>
+    <div class="col-sm-2">
+        <a href="#">Decline</a>
+    </div>
+</div>
+{% endfor %}
+{% endif %}
+</div>
+{% endblock %}

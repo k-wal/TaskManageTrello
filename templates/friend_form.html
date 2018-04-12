@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-sm-3"></div>
+        <div class="col-sm-6 caption1 align="center"">
+            <h1>Friend a User</h1>
+        </div>
+        <div class="col-sm-3"></div>
+    </div>
+    <div class="container">
+        <div class="col-sm-4"></div>
+        <div class="col-sm-4">
+            <form class="" action="/{{username}}/add-friend" method="POST">
+                {{ form.csrf_token }}
+                {% from "_formhelpers.html" import render_field %}
+                <div class="form-group">{{render_field(form.username, class_="form-control")}}</div>
+                <input type="submit" value="Submit">
+            </form>
+        </div>
+        <div class="col-sm-4"></div>
+    </div>
+</div>
+<div class="container-fluid">
+{% if users %}
+{% for user in users %}
+<div class="row">
+	<div class="col-sm-6">{{user.name}}</div>
+	<div class="col-sm-6">{{user.username}}</div>
+</div>
+{% endfor %}
+{% endif %}
+</div>
+{% endblock %}

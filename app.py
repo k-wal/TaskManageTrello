@@ -13,11 +13,12 @@ from wtforms import StringField, PasswordField, BooleanField
 from wtforms.fields.html5 import DateField
 from wtforms.validators import Email, EqualTo, Length, Required, InputRequired
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
-from models import db, User, Task, List
+from models import db, User, Task, List, Connection
 import os
 from flask import request
 from werkzeug.utils import secure_filename
 from flask_uploads import UploadSet, IMAGES, configure_uploads
+from api.friends import is_friends_or_pending, get_friend_requests,get_friends
 
 UPLOAD_FOLDER ='static/images'
 # basedir = os.path.abspath(os.path.dirname(__file__))
@@ -202,13 +203,13 @@ def shift_lists(user_name,task_id,list_id):
     form=TempListChangeForm(new_list=current_list.name)
     if form.validate_on_submit():
         current_task.list_id = List.query.filter(List.name == form.new_list.data).first().id
-        db.session.commit() 
+        db.session.commit()
         return redirect("/"+user_name+"/list/"+str(current_task.list_id)+"/task/"+task_id)
     return render_template('shift_task_to_list.html',form=form, username=user_name,task_id=task_id,list_id=list_id,task=current_task,list=current_list,all_lists=all_lists)
 
 @app.route('/<user_name>/try_search_jquery',methods=['POST','GET'])
 @login_required
-def jquery_search(user_name):   
+def jquery_search(user_name):
     user_id = current_user.id
     availableTags=[]
     for task in Task.query.filter(Task.user_id == user_id):
@@ -218,6 +219,39 @@ def jquery_search(user_name):
 
 
 ### ENDS here
+
+############# adding friends
+
+class FriendForm(FlaskForm):
+    username = StringField('username',validators=[InputRequired(), Length(max=20)])
+
+@app.route("/<user_name>/add-friend", methods=['GET','POST'])
+def add_friend(user_name):
+
+    form = FriendForm()
+    user_a_id = current_user.id
+    if form.validate_on_submit():
+        user_b = User.query.filter_by(username = form.username.data).first()
+        user_b_id = user_b.id
+        # Check connection status between user_a and user_b
+        is_friends, is_pending = is_friends_or_pending(user_a_id, user_b_id)
+
+        if user_a_id == user_b_id:
+            return "You cannot add yourself as a friend."
+        elif is_friends:
+            return "You are already friends."
+        elif is_pending:
+            return "Your friend request is pending."
+        else:
+            requested_connection = Connection(user_a_id=user_a_id,
+                                              user_b_id=user_b_id,
+                                              status="Requested")
+            db.session.add(requested_connection)
+            db.session.commit()
+            print ("User ID %s has sent a friend request to User ID %s" % (user_a_id, user_b_id))
+            return "Request Sent"
+    return render_template('friend_form.html', form=form, users = User.query.all(), username = user_name)
+############################
 
 if __name__ == '__main__':
     db.init_app(app=app)

@@ -19,12 +19,6 @@ followers = db.Table('followers',
     db.Column('followed_id', db.Integer, db.ForeignKey('user.user_id')),
 )
 
-class Friends(Base):
-    __tablename__ = 'friends'
-    user_id = db.Column(db.Integer, ForeignKey('user.user_id'), primary_key=True)
-    friend_id = db.Column(db.Integer, ForeignKey('user.user_id'), primary_key=True)
-    request_status = db.Column(db.Boolean, unique=False, default=False)
-
 
 class User(UserMixin, db.Model):
     # __tablename__ = 'user-table'
@@ -174,8 +168,29 @@ class List(db.Model):
             passive_deletes=True
         )
 
-shared_lists = db.Table('shared_lists',
-    db.Column('list_id', db.Integer, db.ForeignKey('list.list_id')),
-    db.Column('user_id', db.Integer, db.ForeignKey('user.user_id')),
-)
+# shared_lists = db.Table('shared_lists',
+#     db.Column('list_id', db.Integer, db.ForeignKey('list.list_id')),
+#     db.Column('user_id', db.Integer, db.ForeignKey('user.user_id')),
+# )
 
+class Connection(db.Model):
+
+    __tablename__ = "connections"
+
+    connection_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
+    user_a_id = db.Column(db.Integer, db.ForeignKey('user.user_id'), nullable=False)
+    user_b_id = db.Column(db.Integer, db.ForeignKey('user.user_id'), nullable=False)
+    status = db.Column(db.String(100), nullable=False)
+
+    # When both columns have a relationship with the same table, need to specify how
+    # to handle multiple join paths in the square brackets of foreign_keys per below
+    user_a = db.relationship("User", foreign_keys=[user_a_id], backref=db.backref("sent_connections"))
+    user_b = db.relationship("User", foreign_keys=[user_b_id], backref=db.backref("received_connections"))
+
+    def __repr__(self):
+        """Provide helpful representation when printed."""
+
+        return "<Connection connection_id=%s user_a_id=%s user_b_id=%s status=%s>" % (self.connection_id,
+                                                                                      self.user_a_id,
+                                                                                      self.user_b_id,
+                                                                                      self.status)
