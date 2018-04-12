@@ -69,18 +69,30 @@ def delete_list(user_name,list_id):
 class TempAddUserForm(FlaskForm):
     add_user = StringField('Add User :',validators=[InputRequired()])
     
-@list_blueprint.route('/<user_name>/list/<list_id>/add_user',methods=['POST','GET'])
+@list_blueprint.route('/<user_name>/list/<list_id>/see_shared',methods=['POST','GET'])
 @login_required
-def add_user(user_name,list_id):
-    following = current_user.all_followed()
+def see_users(user_name,list_id):
     user = User.query.filter_by(username = user_name).first()
     current_list = List.query.get(list_id)
-    form = TempAddUserForm()
-    if form.validate_on_submit():
-        current_list.add_user(User.query.filter(User.username == form.add_user.data).first())
-        db.session.commit()
-        return render_template('add_user_to_list.html',user=user, username=user.username,following=following,form=form,list=current_list,all_users=current_list.return_all_users())
-    return render_template('add_user_to_list.html',user=user,username=user.username,following=following,form=form,list=current_list,all_users=current_list.return_all_users())
+    following = current_user.all_followed()
+    #print(following)
+    following_not_list = []
+    for cur_user in following:
+        #print(cur_user)
+        if not current_list.is_user(cur_user):
+            following_not_list.append(cur_user)
+    return render_template('add_user_to_list.html',user=user,username=user.username,following=following_not_list,list=current_list,all_users=current_list.return_all_users())
+
+@list_blueprint.route('/<user_name>/list/<list_id>/add=<to_add>',methods=['GET','POST'])
+@login_required
+def add_user(user_name,list_id,to_add):
+    current_list = List.query.get(list_id)
+    user = User.query.filter(User.username == to_add).first()
+    current_list.add_user(user)
+    db.session.commit()
+    return redirect('/'+user_name+'/list/'+list_id+'/see_shared')
+
+
 
 @list_blueprint.route('/<user_name>/all_lists',methods=['POST','GET'])
 @login_required
@@ -89,3 +101,20 @@ def show_shared_lists(user_name):
     all_lists = user.return_all_lists()
     return render_template('show_shared_lists.html',user=user,all_lists=all_lists)
 
+@list_blueprint.route('/<user_name>/list/<list_id>/remove=<to_remove>',methods=['POST','GET'])
+@login_required
+def remove_user_from_list(user_name,list_id,to_remove):
+    current_list = List.query.get(list_id)
+    cur_user = User.query.filter(User.username == to_remove).first()
+    current_list.remove_user(cur_user)
+    db.session.commit()
+    #return 'removed'
+    return redirect('/'+user_name+'/list/'+list_id+'/see_shared')
+@list_blueprint.route('/<user_name>/exit=<list_id>',methods=['POST','GET'])
+@login_required
+def exit_list(user_name,list_id):
+    current_list = List.query.get(list_id)
+    cur_user = User.query.filter(User.username == user_name).first()
+    current_list.remove_user(cur_user)
+    db.session.commit()
+    return redirect('/'+user_name+'/all_lists')
