@@ -292,6 +292,12 @@ def unfriend(user_name,friend_id):
     user = User.query.get(friend_id)
     current_user.unfollow(user)
     user.unfollow(current_user)
+    relationleft = db.session.query(Connection).filter(Connection.user_a_id == current_user.id, Connection.user_b_id == friend_id).first()
+    relationright = db.session.query(Connection).filter(Connection.user_a_id == friend_id, Connection.user_b_id == current_user.id).first()
+    if relationleft:
+        relationleft.status = 'Unfriended'
+    if relationright:
+        relationright.status = 'Unfriended'
     db.session.commit()
     return redirect(url_for('show_friends', user_name=user_name))
 
