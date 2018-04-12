@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-sm-3"></div>
+        <div class="col-sm-6 caption1 align="center"">
+            <h1>Change lists for task {{task.name}}</h1>
+            <br>
+            <h4>Current list is {{list.name}}</h4>
+        </div>
+        <div class="col-sm-3"></div>
+    </div>
+    <div>
+        <h5>Options are :</h5>
+    </div>
+    {% for temp_list in all_lists %}
+    <div class="row">{{temp_list.name}}</div>
+    {% endfor %}
+
+    <div class="container">
+        <div class="col-sm-4"></div>
+        <div class="col-sm-4">
+            <form class="" action="/{{username}}/list/{{list_id}}/task/{{task.id}}/shift_lists" method="POST">
+                {{ form.csrf_token }}
+                {% from "_formhelpers.html" import render_field %}
+                <div class="form-group">{{render_field(form.new_list, class_="form-control")}}</div>
+                <input type="submit" value="Submit">
+            </form>
+        </div>
+        <div class="col-sm-4"></div>
+    </div>
+</div>
+
+{% endblock %}

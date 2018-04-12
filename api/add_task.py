@@ -113,8 +113,9 @@ def go_home(user_name):
 @task_blueprint.route('/<user_name>/list/<list_id>/task/<task_id>',methods=['POST','GET'])
 @login_required
 def show_task(user_name,task_id,list_id):
+    list=List.query.get(list_id)
     userid=User.query.filter(User.username==user_name).first().id
-    return render_template('showtask.html',list_id=list_id,user=User.query.get(userid),task=Task.query.get(task_id),task_id=task_id)
+    return render_template('showtask.html',list=list,list_id=list_id,user=User.query.get(userid),task=Task.query.get(task_id),task_id=task_id)
 
 
 @task_blueprint.route('/<user_name>/list/<list_id>/task/<task_id>/edit',methods=['POST','GET'])
@@ -177,3 +178,5 @@ def search_tasks(user_name):
     filter_form=FilterForm()
     Tasks=tasks
     return render_template('home.html', sort_form=sort_form,user=user,tasks=Tasks,filter_form=filter_form)
+
+
