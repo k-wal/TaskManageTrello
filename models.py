@@ -210,7 +210,9 @@ class List(db.Model):
         if not self.is_user(cur_user):
             self.all_users.append(cur_user)
 
-
+    def remove_user(self, user):
+        if self.is_user(user):
+            self.all_users.remove(user)
 
 
 # shared_lists = db.Table('shared_lists',

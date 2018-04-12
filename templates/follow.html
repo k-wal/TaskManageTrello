@@ -27,11 +27,11 @@
         <div class="col-sm-2"></div>
     	<div class="col-sm-3">{{user.name}}</div>
     	<div class="col-sm-3">{{user.username}}</div>
-        <div clas="col-sm-3"><a href="/{{username}}/follow={{user.username}}">Follow</a></div>
+        <div clas="col-sm-3"><a href="/{{username}}/add_friend={{user.username}}">Send Peer Request</a></div>
     </div>
     {% endfor %}
     {% endif %}
-    <div><a href="/{{username}}/following">See who you're following</a></div>
+    <div><a href="/{{username}}/following">See who your peers are.</a></div>
 
 </div>
 {% endblock %}
