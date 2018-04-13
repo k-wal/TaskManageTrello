@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="row">
+        <h1>{{friend.name}}</h1>
+    </div>
+    <div class="row">
+        <h6>@{{friend.username}}</h6>
+    </div>
+    <div class = "row">
+        <div class="col-sm-6"><b>Name</b></div><div class="col-sm-6">{{friend.name}}</div>
+    </div>
+    <div class = "row">
+        <div class="col-sm-6"><b>Username</b></div><div class="col-sm-6">{{friend.username}}</div>
+    </div>
+    <div class = "row">
+        <div class="col-sm-6"><b>DOB</b></div><div class="col-sm-6">{{friend.dob}}</div>
+    </div>
+    <div class = "row">
+        <div class="col-sm-6"><b>Number of shared lists</b></div><div class="col-sm-6">{{shared_number}}</div>
+    </div>
+{% endblock %}

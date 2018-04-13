@@ -28,7 +28,11 @@
         <div class="col-sm-4">{{cur_user.name}}</div>
         <div class="col-sm-4">{{cur_user.username}}</div>
         {% if is_owner %}
+        {% if cur_user.username != username %}
         <div class="col-sm-4"><a href="/{{username}}/list/{{list.id}}/remove={{cur_user.username}}">Remove from list</a></div>
+        {% else %}
+        <div class="col-sm-4">That's you!</div>
+        {% endif %}
         {% endif %}    
     </div>
     {% endfor %}

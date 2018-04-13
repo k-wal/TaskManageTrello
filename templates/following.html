@@ -12,7 +12,7 @@
     {% if following %}
     {% for user in following %}
     <div class="row">
-        <div class="col-sm-4">{{user.name}}</div>
+        <div class="col-sm-4"><a href="/{{username}}/friend_profile/{{user.username}}">{{user.name}}</a></div>
         <div class="col-sm-4">{{user.username}}</div>
         <div class="col-sm-4">
             <a href="/{{username}}/unfriend={{user.id}}">Unfriend</a>

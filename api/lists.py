@@ -28,6 +28,8 @@ def make_new_list(user_name):
         new_list = List(user_id=userid,name=form.name.data,description=form.description.data)
         db.session.add(new_list)
         db.session.commit()
+        new_list.add_user(User.query.get(userid))
+        db.session.commit()
         print('list added')
         return redirect(url_for('task_blueprint.go_home', user_name=user_name))
     return render_template('add_lists.html',form=form, username=user_name)

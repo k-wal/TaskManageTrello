@@ -301,6 +301,20 @@ def unfriend(user_name,friend_id):
     db.session.commit()
     return redirect(url_for('show_friends', user_name=user_name))
 
+@app.route("/<user_name>/friend_profile/<friend_username>",methods=['GET','POST'])
+@login_required
+def friend_profile(user_name,friend_username):
+    friend = User.query.filter(User.username == friend_username).first()
+    user = User.query.filter(User.username == user_name).first()
+    all_lists = user.return_all_lists()
+    shared_number = 0
+    for list in all_lists:
+        if list.is_user(friend):
+            shared_number = shared_number + 1
+
+    return render_template('friend_profile.html',shared_number=shared_number,friend=friend,user=user)
+
+
 ############################
 
 if __name__ == '__main__':
