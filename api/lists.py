@@ -37,8 +37,12 @@ def make_new_list(user_name):
 def show_list(user_name,list_id):
     userid=User.query.filter(User.username==user_name).first().id
     current_list = List.query.get(list_id)
+    is_owner = False
+    creater = User.query.get(current_list.user_id)
+    if current_list.user_id == userid:
+        is_owner = True
     tasks=Task.query.filter(Task.list_id==list_id).order_by(Task.relpriority)
-    return render_template('show_list.html',user=current_user,list=List.query.get(list_id), list_id=list_id,tasks=tasks)
+    return render_template('show_list.html',creater=creater,is_owner = is_owner,user=current_user,list=List.query.get(list_id), list_id=list_id,tasks=tasks)
 
 @list_blueprint.route('/<user_name>/list/<list_id>/list_update', methods=['POST', 'GET'])
 @login_required
@@ -77,11 +81,14 @@ def see_users(user_name,list_id):
     following = current_user.all_followed()
     #print(following)
     following_not_list = []
+    is_owner = False
+    if current_list.user_id == user.id:
+        is_owner = True
     for cur_user in following:
         #print(cur_user)
         if not current_list.is_user(cur_user):
             following_not_list.append(cur_user)
-    return render_template('add_user_to_list.html',user=user,username=user.username,following=following_not_list,list=current_list,all_users=current_list.return_all_users())
+    return render_template('add_user_to_list.html',is_owner=is_owner,user=user,username=user.username,following=following_not_list,list=current_list,all_users=current_list.return_all_users())
 
 @list_blueprint.route('/<user_name>/list/<list_id>/add=<to_add>',methods=['GET','POST'])
 @login_required

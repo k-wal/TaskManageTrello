@@ -116,7 +116,11 @@ def go_home(user_name):
 def show_task(user_name,task_id,list_id):
     list=List.query.get(list_id)
     userid=User.query.filter(User.username==user_name).first().id
-    return render_template('showtask.html',list=list,list_id=list_id,user=User.query.get(userid),task=Task.query.get(task_id),task_id=task_id)
+    owner=User.query.get(list.user_id)
+    is_owner = False
+    if list.user_id == userid:
+        is_owner = True
+    return render_template('showtask.html',is_owner=is_owner,owner=owner,list=list,list_id=list_id,user=User.query.get(userid),task=Task.query.get(task_id),task_id=task_id)
 
 
 @task_blueprint.route('/<user_name>/list/<list_id>/task/<task_id>/edit',methods=['POST','GET'])

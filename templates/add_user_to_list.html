@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 
 {% block content %}
+{% if is_owner %}
     <div class="row">
         <div class="col-sm-3"></div>
         <div class="col-sm-6 caption1 align="center"">
@@ -18,7 +19,7 @@
     </div>
     {% endfor %}
     {% endif %}
-
+{% endif %}
     <div class="container-fluid">
         <div class="row">Users currently involved in this list</div>
     {% if all_users %}
@@ -26,7 +27,9 @@
     <div class="row">
         <div class="col-sm-4">{{cur_user.name}}</div>
         <div class="col-sm-4">{{cur_user.username}}</div>
+        {% if is_owner %}
         <div class="col-sm-4"><a href="/{{username}}/list/{{list.id}}/remove={{cur_user.username}}">Remove from list</a></div>
+        {% endif %}    
     </div>
     {% endfor %}
     {% endif %}

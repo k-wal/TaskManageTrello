@@ -12,7 +12,7 @@
     {% if all_lists %}
     {% for list in all_lists %}
     <div class="row">
-        <div class="col-sm-4">{{list.name}}</div>
+        <div class="col-sm-4"><a href="/{{user.username}}/list/{{list.id}}">{{list.name}}</a></div>
         <div class="col-sm-4">{{list.description}}</div>
         <div class="col-sm-4"><a href="/{{user.username}}/exit={{list.id}}">Leave this list</a></div>
     </div>
