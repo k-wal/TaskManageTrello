@@ -7,6 +7,8 @@
 <div class="row">Created on {{list.create_time}}</div>
 <div class="row">Created by {{creater.username}}</div>
 <div>
+    <div class="row">
+        <div class="col-sm-8">
     <div class="container-fluid"><h5><b>Your tasks</b></h5></div>
     <div class="container-fluid">
         {% if tasks %}
@@ -21,6 +23,16 @@
     {% endif %}
     </div>
 </div>
+<div class="col-sm-4">
+    <form class="" action="/{{user.username}}/list/{{list.id}}" method="POST">
+            {{ sort_form.csrf_token }}
+            {% from "_formhelpers.html" import render_field %}
+            <div class="form-group">{{render_field(sort_form.criteria, class_="form-control")}}</div>
+            <input type="submit" value="Sort">
+        </form>
+    </div>
+</div>
+<br>
 {% if is_owner %}
 <div class="row">
 	<div class="col-sm-4"><a href="/{{user.username}}/list/{{list.id}}/list_update">Edit</a></div>
