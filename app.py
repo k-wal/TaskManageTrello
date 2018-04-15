@@ -59,6 +59,12 @@ def load_user(user_id):
     return User.query.get(int(user_id))
 
 
+def send_email(subject, sender, recipients, text_body, html_body):
+    msg = Message(subject, sender=sender, recipients=recipients)
+    msg.body = text_body
+    msg.html = html_body
+    mail.send(msg)
+
 ### FROM api.user_registration
 @app.route('/')
 @app.route('/index')
