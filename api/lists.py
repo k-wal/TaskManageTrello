@@ -127,3 +127,21 @@ def exit_list(user_name,list_id):
     current_list.remove_user(cur_user)
     db.session.commit()
     return redirect('/'+user_name+'/all_lists')
+
+class SortForm(FlaskForm):
+    criteria = SelectField('Sort by:', choices=[('Deadline(near)','Deadline(near)'),('Deadline(far)','Deadline(far)'),('Name(A-Z)','Name(A-Z)'),('Name(Z-A)','Name(Z-A)')],default='Name(A-Z)')
+
+@list_blueprint.route('/<user_name>/search_lists')
+@login_required
+def search_lists(user_name):
+    to_search=request.args.get('query')
+    user=User.query.filter(User.username==user_name).first()
+    Lists = List.query.filter(List.user_id==user.id)
+    lists=[]
+    for list in Lists:
+        if to_search in list.name or to_search in list.description:
+            lists.append(list)
+
+    sort_form=SortForm()
+    Lists=lists
+    return render_template('home.html', sort_form=sort_form,user=user,lists=Lists)
