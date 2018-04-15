@@ -86,7 +86,7 @@ def go_home(user_name):
 
         return render_template('home.html',sort_form=sort_form,user=User.query.get(userid),tasks=tasks,filter_form=filter_form, lists=lists)
 
-    return render_template('home.html', sort_form=sort_form,filter_form=filter_form,user=User.query.get(userid),tasks=Tasks,lists=lists)
+    return render_template('home.html', sort_form=sort_form,user=User.query.get(userid),tasks=Tasks,lists=lists)
 
 @task_blueprint.route('/<user_name>/list/<list_id>/task/<task_id>',methods=['POST','GET'])
 @login_required
