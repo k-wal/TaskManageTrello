@@ -137,7 +137,7 @@ def dependent(user_name,task_id,list_id):
     current_task = Task.query.get(task_id)
     alltasks=[]
     for task in tasks:
-        if not current_task.is_dependent(task):
+        if not current_task.is_dependent(task) and task.list_id == current_task.list_id:
             alltasks.append(task)
     deptask = current_task.all_dependent()
     return render_template('task_dependency.html', list_id=list_id,username=user_name, deptask=deptask, alltasks=alltasks, current_task=current_task, task_id=task_id)
