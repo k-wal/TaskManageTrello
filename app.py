@@ -87,7 +87,7 @@ def index():
         <p style='color:'purple'>Get your ass up your chair and work. Login now </p>
     '''
     mail.send(msg)
-    #return render_template('index.html')
+    return render_template('index.html')
 
 
 class RegisterForm(FlaskForm):
