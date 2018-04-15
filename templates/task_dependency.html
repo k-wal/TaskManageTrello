@@ -22,7 +22,7 @@
     <div class="container">
         <div class="col-sm-4"></div>
         <div class="col-sm-4">
-            <form class="" action="/{{username}}/{{task_id}}/dependency" method="POST">
+            <form class="" action="/{{username}}/list/{{list_id}}/task/{{task_id}}/dependency" method="POST">
                 {{ form.csrf_token }}
                 {% from "_formhelpers.html" import render_field %}
                 <div class="form-group">{{render_field(form.name, class_="form-control")}}</div>
@@ -44,6 +44,7 @@
     {% for t in deptask %}
     <div class="row">
         <div class="col-sm-6">{{t.name}}</div>
+        <div class="col-sm-6"><a href="/{{username}}/list/{{list_id}}/task/{{task_id}}/remove_dep={{t.id}}">Remove Dependancy</a></div>
     </div>
     {% endfor %}
     {% endif %}

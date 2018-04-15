@@ -63,32 +63,9 @@ def add_task(user_name, list_id):
 def go_home(user_name):
     userid=User.query.filter(User.username==user_name).first().id
     sort_form=SortForm()
-    filter_form=FilterForm()
     Tasks=Task.query.filter(Task.user_id==userid)
     print(Tasks)
     lists = List.query.filter(List.user_id==userid)
-
-    if filter_form.validate_on_submit():
-        if filter_form.completed.data == False:
-            tasks=Tasks.filter(Task.status != 'Completed')
-            Tasks=tasks
-
-        if filter_form.pending.data == False:
-            tasks=Tasks.filter(Task.status != 'Pending')
-            Tasks=tasks
-
-        if filter_form.ongoing.data == False:
-            tasks=Tasks.filter(Task.status != 'Ongoing')
-            Tasks=tasks
-
-        if filter_form.priority_yes.data == False:
-            tasks=Tasks.filter(Task.priority == False)
-            Tasks=tasks
-
-        if filter_form.priority_no.data == False:
-            tasks=Tasks.filter(Task.priority == True)
-            Tasks=tasks
-
 
     if sort_form.validate_on_submit():
         if sort_form.criteria.data == 'Deadline(near)':
@@ -166,7 +143,20 @@ def dependent(user_name,task_id,list_id):
             current_task.dependent_on(task)
         db.session.commit()
         return redirect("/"+user_name+"/list/"+list_id+"/task/"+task_id+"/dependency")
-    return render_template('task_dependency.html', username=user_name, form=form, deptask=deptask, alltasks=alltasks, current_task=current_task, task_id=task_id)
+    return render_template('task_dependency.html', list_id=list_id,username=user_name, form=form, deptask=deptask, alltasks=alltasks, current_task=current_task, task_id=task_id)
+
+@task_blueprint.route('/<user_name>/list/<list_id>/task/<task_id>/remove_dep=<dep_id>',methods=['POST','GET'])
+@login_required
+def remove_dependency(user_name,task_id,list_id,dep_id):
+    form = TaskDependencyForm()
+    alltasks = Task.query.filter(Task.user_id==current_user.id)
+    current_task = Task.query.get(task_id)
+    deptask = Task.query.get(dep_id)
+    current_task.remove_dependency(deptask)
+    db.session.commit()
+    deptask = current_task.all_dependent()
+    return render_template('task_dependency.html', list_id=list_id,username=user_name, form=form, deptask=deptask, alltasks=alltasks, current_task=current_task, task_id=task_id)
+
 
 @task_blueprint.route('/<user_name>/search_tasks')
 @login_required
