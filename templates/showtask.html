@@ -29,12 +29,12 @@
 </div>
 {% if is_owner %}
 <div class="row">
-	<a href="/{{user.username}}/list/{{list_id}}/task/{{task.id}}/shift_lists">Shift to another list</a>
+	<a href="/{{user.username}}/list/{{list.id}}/task/{{task.id}}/shift_lists">Shift to another list</a>
 </div>
 <div class="row">
-	<div class="col-sm-4"><a href="/{{user.username}}/list/{{list_id}}/task/{{task.id}}/edit">Edit</a></div>
-	<div class="col-sm-4"><a href="/{{user.username}}/list/{{list_id}}/task/{{task.id}}/delete">Delete</a></div>
-	<div class="col-sm-4"><a href="/{{user.username}}/list/{{list_id}}/task/{{task.id}}/dependency">Add Dependency</a></div>
+	<div class="col-sm-4"><a href="/{{user.username}}/list/{{list.id}}/task/{{task.id}}/edit">Edit</a></div>
+	<div class="col-sm-4"><a href="/{{user.username}}/list/{{list.id}}/task/{{task.id}}/delete">Delete</a></div>
+	<div class="col-sm-4"><a href="/{{user.username}}/list/{{list.id}}/task/{{task.id}}/dependency">Add Dependency</a></div>
 </div>
 {% endif %}
 {% endblock %}
