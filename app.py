@@ -19,6 +19,8 @@ from flask import request
 from werkzeug.utils import secure_filename
 from flask_uploads import UploadSet, IMAGES, configure_uploads
 from api.friends import is_friends_or_pending, get_friend_requests,get_friends, get_recieved_requests
+from datetime import datetime, timedelta
+from flask_mail import Mail, Message
 
 UPLOAD_FOLDER ='static/images'
 # basedir = os.path.abspath(os.path.dirname(__file__))
@@ -28,6 +30,14 @@ app = Flask(__name__)
 # app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config.from_object(Config)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+app.config['MAIL_PORT'] = 465
+app.config['MAIL_USE_SSL'] = True
+app.config['MAIL_USERNAME'] = 'ergocompito@gmail.com'
+app.config['MAIL_PASSWORD'] = 'aadilanshita'
+
+mail = Mail(app)
+
 
 #
 
@@ -53,7 +63,25 @@ def load_user(user_id):
 @app.route('/')
 @app.route('/index')
 def index():
-    return render_template('index.html')
+    ###performing a check for all the users that have deadlines coming up and sending them mails.
+    current_date = datetime.utcnow()
+    date_2_days = datetime.now() + timedelta(days=2)
+    dates = Task.query.filter(Task.deadline.between(current_date,date_2_days))
+    emails = []
+    for date in dates:
+        uid = date.user_id
+        u = User.query.filter(User.id == uid).first()
+        if u.email not in emails:
+            emails.append(u.email)
+    msg = Message('test subject', sender='aadilmehdis@gmail.com', recipients=emails)
+    msg.body = 'text body'
+    msg.html = '''
+        <h1>This is an email from Ergo/Compito App.</h1>
+        <p style='color:'red'>You have pending work and fast approaching deadlines.</p>
+        <p style='color:'purple'>Get your ass up your chair and work. Login now </p>
+    '''
+    mail.send(msg)
+    #return render_template('index.html')
 
 
 class RegisterForm(FlaskForm):
@@ -241,7 +269,7 @@ def add_friend(user_name,to_friend):
         return render_template('now_following_message.html',message='You are already friends.',user_name=user_name,user=user_b)
     elif is_pending:
         return render_template('now_following_message.html',message='Your friend request is pending.',user_name=user_name,user=user_b)
-       
+
     else:
         requested_connection = Connection(user_a_id=user_a_id,
                                           user_b_id=user_b_id,
@@ -250,7 +278,7 @@ def add_friend(user_name,to_friend):
         db.session.commit()
         print ("User ID %s has sent a friend request to User ID %s" % (user_a_id, user_b_id))
         return render_template('now_following_message.html',message='Request sent.',user_name=user_name,user=user_b)
-    
+
 
 @app.route("/<user_name>/friend_requests", methods=['GET','POST'])
 @login_required
