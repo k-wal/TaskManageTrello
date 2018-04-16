@@ -191,3 +191,20 @@ def reorder_tasks(user_name, task1_id, task2_id, list_id):
         task2.relpriority = temp
         db.session.commit()
     return redirect(url_for('list_blueprint.show_list',user_name=user_name, list_id=list_id))
+
+@task_blueprint.route('/<user_name>/list/<list_id>/task/mark_complete=<task_id>')
+@login_required
+def mark_complete(user_name, task_id, list_id):
+    current_task = Task.query.get(task_id)
+    list = List.query.get(list_id)
+    user=User.query.filter(User.username==user_name).first()
+    deptask=[]
+    flag=0
+    for task in current_task.all_dependent():
+        if task.status != 'Completed':
+            deptask.append(task)
+            flag = 1
+
+    if(flag == 0):  
+        return redirect(url_for('list_blueprint.show_list',user_name=user_name, list_id=list_id))
+    return render_template('dependent_tasks_left.html',user=user,list=list,tasks=deptask)    
