@@ -6,7 +6,7 @@
 <div class="row"><h1>{{task.name}}</h1></div>
 <div class="row"><h2>{{task.description}}</h2></div>
 <div class="row">Created on {{task.create_time}}</div>
-<div class="row">Created by {{owner.username}}</div>
+<div class="row">Created by <a href="/{{user.username}}/friend_profile/{{owner.username}}">{{owner.name}}</a></div>
 <div class="row">Belongs to list <a href="/{{user.username}}/list/{{list.id}}">{{list.name}}</a></div>
 <div class="row">
 	<div class="col-sm-4">Deadline:</div><div class="col-sm-4">{{task.deadline}}</div>

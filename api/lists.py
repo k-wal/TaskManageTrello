@@ -34,17 +34,39 @@ def make_new_list(user_name):
         return redirect(url_for('task_blueprint.go_home', user_name=user_name))
     return render_template('add_lists.html',form=form, username=user_name)
 
+class SortForm(FlaskForm):
+    criteria = SelectField('Sort by:', choices=[('Deadline(near)','Deadline(near)'),('Deadline(far)','Deadline(far)'),('Name(A-Z)','Name(A-Z)'),('Name(Z-A)','Name(Z-A)')])
+
 @list_blueprint.route('/<user_name>/list/<list_id>',methods=['POST','GET'])
 @login_required
 def show_list(user_name,list_id):
+    sort_form=SortForm()
     userid=User.query.filter(User.username==user_name).first().id
     current_list = List.query.get(list_id)
     is_owner = False
     creater = User.query.get(current_list.user_id)
     if current_list.user_id == userid:
         is_owner = True
-    tasks=Task.query.filter(Task.list_id==list_id).order_by(Task.relpriority)
-    return render_template('show_list.html',creater=creater,is_owner = is_owner,user=current_user,list=List.query.get(list_id), list_id=list_id,tasks=tasks)
+    tasks = Task.query.filter(Task.list_id==list_id).order_by(Task.relpriority)
+
+    if sort_form.validate_on_submit():
+        if sort_form.criteria.data == 'Deadline(near)':
+            tasks=Task.query.filter(Task.list_id==list_id).order_by(Task.deadline)
+
+        if sort_form.criteria.data == 'Deadline(far)':
+            tasks=Task.query.filter(Task.list_id==list_id).order_by(Task.deadline.desc())
+
+        if sort_form.criteria.data == 'Name(A-Z)':
+            tasks=Task.query.filter(Task.list_id==list_id).order_by(Task.name)
+            #print('****************')
+            #print(tasks)
+            #print('****************')
+
+        if sort_form.criteria.data == 'Name(Z-A)':
+            tasks=Task.query.filter(Task.list_id==list_id).order_by(Task.name.desc())
+
+        return render_template('show_list.html',sort_form=sort_form,creater=creater,is_owner = is_owner,user=current_user,list=List.query.get(list_id), list_id=list_id,tasks=tasks)
+    return render_template('show_list.html',sort_form=sort_form,creater=creater,is_owner = is_owner,user=current_user,list=List.query.get(list_id), list_id=list_id,tasks=tasks)
 
 @list_blueprint.route('/<user_name>/list/<list_id>/list_update', methods=['POST', 'GET'])
 @login_required

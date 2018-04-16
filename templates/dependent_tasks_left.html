@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="row">
+    <h3>The following tasks need to be completed before this task can be completed</h3>
+</div>
+
+
+<div>
+        {% if tasks %}
+        {% for task in tasks %}
+        {% if task.status != 'Completed' %}
+        <div class="row">
+            <div class="col-sm-1">{{task.name}}</div>
+            <div class="col-sm-3">{{task.description}}</div>
+            <div class="col-sm-2">{{task.deadline}}</div>
+            <div class="col-sm-3"><a href="/{{user.username}}/list/{{list.id}}/task/{{task.id}}">See More Details</a></div>
+            
+            <div class="col-sm-3"><a href="/{{user.username}}/list/{{list.id}}/task/mark_complete={{task.id}}">Mark as Complete</a></div>
+            <div class="row">Status : {{task.status}}</div>
+        </div>
+        {% endif %}
+        {% endfor %}
+        {% endif %}
+    
+</div>
+
+{% endblock %}
