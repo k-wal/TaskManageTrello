@@ -79,14 +79,15 @@ def index():
         u = User.query.filter(User.id == uid).first()
         if u.email not in emails:
             emails.append(u.email)
-    msg = Message('test subject', sender='aadilmehdis@gmail.com', recipients=emails)
-    msg.body = 'text body'
-    msg.html = '''
-        <h1>This is an email from Ergo/Compito App.</h1>
-        <p style='color:'red'>You have pending work and fast approaching deadlines.</p>
-        <p style='color:'purple'>Get your ass up your chair and work. Login now </p>
-    '''
-    mail.send(msg)
+        if emails:
+            msg = Message('test subject', sender='aadilmehdis@gmail.com', recipients=emails)
+            msg.body = 'text body'
+            msg.html = '''
+                <h1>This is an email from Ergo/Compito App.</h1>
+                <p style='color:'red'>You have pending work and fast approaching deadlines.</p>
+                <p style='color:'purple'>Get your ass up your chair and work. Login now </p>
+            '''
+            mail.send(msg)
     return render_template('index.html')
 
 
