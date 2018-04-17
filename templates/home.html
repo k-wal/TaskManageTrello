@@ -1,7 +1,6 @@
 {% extends 'base.html' %}
 
 {% block navbar %}
-
 <nav class="navbar navbar-default navbar-inverse">
 <div class="container-fluid">
 <div class="navbar-header">
@@ -84,11 +83,9 @@ glyphicon glyphicon-user"></span> <span class="caret"></span></a>
                     <h3 class="box-title"><a href="/{{user.username}}/list/{{tasker[0].id}}" style="color:inherit">{{tasker[0].name}}</a></h3>
             <div class="box-tools pull-right">
               <ul class="pagination pagination-sm inline">
-                <li><a href="#">«</a></li>
-                <li><a href="#">1</a></li>
-                <li><a href="#">2</a></li>
-                <li><a href="#">3</a></li>
-                <li><a href="#">»</a></li>
+                 <li><a href=""><span class="glyphicon glyphicon-search" data-toggle="tooltip" title="Add Lists" data-placement="bottom"></span> </a></li>
+                <li><a href="/{{user.username}}/list/{{tasker[0].id}}/newtask"> <span class="glyphicon glyphicon-plus" data-toggle="tooltip" title="Add Lists" data-placement="bottom"></span> </a></li>
+                <li><a href="/{{user.username}}/list/{{tasker[0].id}}/delete"> <span class="glyphicon glyphicon-trash" data-toggle="tooltip" title="Add Lists" data-placement="bottom"></span> </a></li>
               </ul>
             </div>
           </div>
