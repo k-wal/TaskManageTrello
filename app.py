@@ -9,12 +9,13 @@ from api.upload_profile_images import image_blueprint
 from api.add_task import task_blueprint
 from api.comments import comment_blueprint
 from api.lists import list_blueprint
+from api.notifications import notif_blueprint
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField
 from wtforms.fields.html5 import DateField
 from wtforms.validators import Email, EqualTo, Length, Required, InputRequired
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
-from models import db, User, Task, List, Connection
+from models import db, User, Task, List, Connection, Notif
 import os
 from flask import request
 from werkzeug.utils import secure_filename
@@ -51,6 +52,7 @@ app.register_blueprint(task_blueprint)
 app.register_blueprint(image_blueprint)
 app.register_blueprint(list_blueprint)
 app.register_blueprint(comment_blueprint)
+app.register_blueprint(notif_blueprint)
 
 
 login_manager = LoginManager()
@@ -272,7 +274,11 @@ def add_friend(user_name,to_friend):
     user_b_id = user_b.id
        # Check connection status between user_a and user_b
     is_friends, is_pending, is_friends_reverse = is_friends_or_pending(user_a_id, user_b_id)
-
+    msg=current_user.name + " sent you a friend request."
+    new_notif = Notif(user_id=user_b.id, content=msg, typ='Request', second_user_id=current_user.id)
+    db.session.add(new_notif)
+    db.session.commit()
+    
     if user_a_id == user_b_id:
         return render_template('now_following_message.html',message='You cannot add yourself as a friend.',user_name=user_name,user=user_b)
     elif is_friends or is_friends_reverse:
@@ -306,6 +312,10 @@ def accept_friend_request(user_name, friend_id):
     user = User.query.get(user_a_id)
     current_user.follow(user)
     user.follow(current_user)
+    db.session.commit()
+    msg=current_user.name + " has accepted your friend request"
+    new_notif = Notif(user_id=friend_id, content=msg, typ='Shared',second_user_id=current_user.id)
+    db.session.add(new_notif)
     db.session.commit()
     return redirect(url_for('show_friend_requests', user_name=user_name))
 

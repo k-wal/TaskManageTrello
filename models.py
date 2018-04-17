@@ -80,6 +80,13 @@ class User(UserMixin, db.Model):
         cascade="all, delete-orphan",
         passive_deletes=True
     )
+    notif = db.relationship(
+        'Notif',
+        backref= db.backref('user', lazy='joined'),
+        cascade="all, delete-orphan",
+        passive_deletes=True
+    )
+
 
     def set_password(self, secret):
         self.password = generate_password_hash(secret)
@@ -246,6 +253,33 @@ class Comment(db.Model):
             'content': self.content,
             'list_id' : self.list_id
         }
+
+    def __repr__(self):
+        return self.serialize().__repr__()
+
+class Notif(db.Model):
+    id = db.Column('notif_id', db.Integer, primary_key=True, autoincrement=True)
+    user_id = db.Column('user_id', db.Integer, db.ForeignKey('user', ondelete='CASCADE'), nullable=False)
+    content = db.Column('content', db.String(200))
+    create_time = db.Column('create_time', db.DateTime, default=datetime.utcnow)
+    typ = db.Column('typ', db.Enum(
+        *['Accepted', 'Deadline', 'Shared','Request']))
+    status = db.Column('status', db.Enum(
+        *['Read', 'Unread']), default = 'Unread')
+    second_user_id = db.Column('second_user_id', db.Integer)
+
+        
+
+    def serialize(self):
+        return {
+            'notif_id': self.id,
+            'create_time': self.create_time,
+            'status' : self.status,
+            'user_id': self.user_id,
+            'content': self.content,
+            'typ' : self.type,
+            'second_user_id' : self.second_user_id
+    }
 
     def __repr__(self):
         return self.serialize().__repr__()

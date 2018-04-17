@@ -4,7 +4,7 @@ from wtforms import StringField, PasswordField, BooleanField, SelectField
 from wtforms.fields.html5 import DateField
 from wtforms.validators import Email, EqualTo, Length, Required, InputRequired
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
-from models import db, User, Task, List
+from models import db, User, Task, List, Notif
 
 task_blueprint = Blueprint('task_blueprint', __name__)
 
@@ -65,6 +65,7 @@ def go_home(user_name):
     sort_form=SortForm()
     Tasks=Task.query.filter(Task.user_id==userid)
     print(Tasks)
+    notifs=Notif.query.filter(Notif.user_id == userid, Notif.status == 'Unread').order_by(Notif.create_time)
     lists = List.query.filter(List.user_id==userid)
     tasks_of_lists = []
     for list in lists:
@@ -94,9 +95,9 @@ def go_home(user_name):
             tasks=Task.query.filter(Task.user_id==userid).order_by(Task.name.desc())
 
 
-        return render_template('home.html',sort_form=sort_form,user=User.query.get(userid),tasks=tasks, lists=lists, tasks_of_lists=tasks_of_lists)
+        return render_template('home.html',notifs=notifs,sort_form=sort_form,user=User.query.get(userid),tasks=tasks, lists=lists, tasks_of_lists=tasks_of_lists)
 
-    return render_template('home.html', sort_form=sort_form,user=User.query.get(userid),tasks=Tasks,lists=lists, tasks_of_lists=tasks_of_lists)
+    return render_template('home.html',notifs=notifs, sort_form=sort_form,user=User.query.get(userid),tasks=Tasks,lists=lists, tasks_of_lists=tasks_of_lists)
 
 @task_blueprint.route('/<user_name>/list/<list_id>/task/<task_id>',methods=['POST','GET'])
 @login_required

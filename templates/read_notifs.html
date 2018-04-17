@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="row">
+    <h1>Read Notifications</h1>
+</div>
+
+{% if notifs %}
+    {% for notif in notifs %}
+    <div class="row">
+        <div class="col-sm-9">
+            {{notif.content}}
+        </div>
+    </div>
+    {% endfor %}
+{% endif %}
+
+<hr>
+<div class="row">
+    <a href="/{{user.username}}/home">Go back to home</a>
+</div>
+
+{% endblock %}

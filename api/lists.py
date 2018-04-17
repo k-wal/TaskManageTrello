@@ -4,7 +4,7 @@ from wtforms import StringField, PasswordField, BooleanField, SelectField
 from wtforms.fields.html5 import DateField
 from wtforms.validators import Email, EqualTo, Length, Required, InputRequired
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
-from models import db, User, Task, List
+from models import db, User, Task, List, Notif
 
 list_blueprint = Blueprint('list_blueprint', __name__)
 
@@ -121,6 +121,11 @@ def add_user(user_name,list_id,to_add):
     user = User.query.filter(User.username == to_add).first()
     current_list.add_user(user)
     db.session.commit()
+    if to_add != user_name:    
+        msg=current_user.name + " added you in " + current_list.name
+        new_notif = Notif(user_id=user.id, content=msg, typ='Shared',second_user_id=user.id)
+        db.session.add(new_notif)
+        db.session.commit()
     return redirect('/'+user_name+'/list/'+list_id+'/see_shared')
 
 
