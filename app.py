@@ -50,6 +50,8 @@ mail = Mail(app)
 app.register_blueprint(task_blueprint)
 app.register_blueprint(image_blueprint)
 app.register_blueprint(list_blueprint)
+app.register_blueprint(comment_blueprint)
+
 
 login_manager = LoginManager()
 login_manager.init_app(app)

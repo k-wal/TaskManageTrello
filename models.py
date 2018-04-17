@@ -235,10 +235,11 @@ class Comment(db.Model):
     list_id = db.Column('list_id', db.Integer, db.ForeignKey('list.list_id', ondelete='CASCADE'), nullable=False)
     content = db.Column('content', db.String(200))
     create_time = db.Column('create_time', db.DateTime, default=datetime.utcnow)
-    
+    username = db.Column('username', db.String(64))
 
     def serialize(self):
         return {
+            'username' : self.username,
             'comment_id': self.id,
             'create_time': self.create_time,
             'user_id': self.user_id,

@@ -1,16 +1,42 @@
 {% extends 'base.html' %}
 
 {% block content %}
-
-
-
     <div class="row">
+        <h1>Comments</h1>
+    </div>
+    <div class="row">
+        <h3>For list <a href="/{{user.username}}/list/{{list.id}}">{{list.name}}</a></h3>
+    </div>
 
+    {% if comments %}
+    {% for comment in comments %}
+    <div class="row"> 
+        <div class="row">
+            by  @{{comment.username}}
+        </div>
+        <div class="row">
+            at {{comment.create_time}}
+        </div>
+        <div class="row">
+            {{comment.content}}
+        </div>
+        {% if user.id == comment.user_id %}
+        <div class="row">
+            <a href="/{{user.username}}/list/{{list.id}}/delete_comment={{comment.id}}">Delete</a>
+        </div>
+        {% endif %}
+    <div class="row"><hr></div>
+    </div>
+    {% endfor %}
+    {% endif %}
+    
+<div class="container">
     <form class="" action="/{{user.username}}/list/{{list.id}}/comments" method="POST">
             {{ form.csrf_token }}
             {% from "_formhelpers.html" import render_field %}
             <div class="form-group">{{render_field(form.content, class_="form-control")}}</div>
             <input type="submit" value="Add comment">
     </form>
+</div>
     
 {% endblock %}
