@@ -105,7 +105,7 @@ glyphicon glyphicon-user"></span> <span class="caret"></span></a>
                 {% endif %}
                   <small class="label label-danger"><i class="fa fa-clock-o"></i id="date">{{task.deadline.strftime('%Y-%m-%d')}}</small>
                   <div class="tools">
-                    <a href="/{{user.username}}/list/{{tasker[0].id}}/task/{{task.id}}/delete"><i class="fa fa-edit"></i></a>
+                    <a href="/{{user.username}}/list/{{tasker[0].id}}/task/{{task.id}}/edit"><i class="fa fa-edit"></i></a>
                     <a href="/{{user.username}}/list/{{tasker[0].id}}/task/{{task.id}}/delete"><i class="fa fa-trash-o"></i></a>
                   </div>
                 </li>
