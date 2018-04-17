@@ -20,6 +20,8 @@
             <div class="col-sm-3"><a href="/{{user.username}}/list/{{list.id}}/task/{{task.id}}">See More Details</a></div>
             {% if task.status != 'Completed' %}
             <div class="col-sm-3"><a href="/{{user.username}}/list/{{list.id}}/task/mark_complete={{task.id}}">Mark as Complete</a></div>
+            {% else %}
+            <div class="col-sm-3">Completed</div>
             {% endif %}
         </div>
     {% endfor %}
@@ -36,13 +38,13 @@
     </div>
 </div>
 <br>
-{% if is_owner %}
 <div class="row">
-	<div class="col-sm-3"><a href="/{{user.username}}/list/{{list.id}}/list_update">Edit</a></div>
-	<div class="col-sm-3"><a href="/{{user.username}}/list/{{list.id}}/delete">Delete</a></div>
-	<div class="col-sm-3"><a href="/{{user.username}}/list/{{list.id}}/newtask">Add Task</a></div>
+    <div class="col-sm-3"><a href="/{{user.username}}/list/{{list.id}}/list_update">Edit</a></div>
+    {% if is_owner %}
+    <div class="col-sm-3"><a href="/{{user.username}}/list/{{list.id}}/delete">Delete</a></div>
+    {% endif %}
+    <div class="col-sm-3"><a href="/{{user.username}}/list/{{list.id}}/newtask">Add Task</a></div>
 </div>
-{% endif %}
 <div class="row">
     <a href="/{{user.username}}/list/{{list.id}}/see_shared">See other users.</a>
 </div>
