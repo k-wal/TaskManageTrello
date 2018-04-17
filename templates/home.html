@@ -83,9 +83,9 @@ glyphicon glyphicon-user"></span> <span class="caret"></span></a>
                     <h3 class="box-title"><a href="/{{user.username}}/list/{{tasker[0].id}}" style="color:inherit">{{tasker[0].name}}</a></h3>
             <div class="box-tools pull-right">
               <ul class="pagination pagination-sm inline">
-                 <li><a href=""><span class="glyphicon glyphicon-search" data-toggle="tooltip" title="Add Lists" data-placement="bottom"></span> </a></li>
-                <li><a href="/{{user.username}}/list/{{tasker[0].id}}/newtask"> <span class="glyphicon glyphicon-plus" data-toggle="tooltip" title="Add Lists" data-placement="bottom"></span> </a></li>
-                <li><a href="/{{user.username}}/list/{{tasker[0].id}}/delete"> <span class="glyphicon glyphicon-trash" data-toggle="tooltip" title="Add Lists" data-placement="bottom"></span> </a></li>
+                 <li><a href=""><span class="glyphicon glyphicon-search" data-toggle="tooltip" title="Search Task" data-placement="bottom"></span> </a></li>
+                <li><a href="/{{user.username}}/list/{{tasker[0].id}}/newtask"> <span class="glyphicon glyphicon-plus" data-toggle="tooltip" title="Add Task" data-placement="bottom"></span> </a></li>
+                <li><a href="/{{user.username}}/list/{{tasker[0].id}}/delete"> <span class="glyphicon glyphicon-trash" data-toggle="tooltip" title="Delete List" data-placement="bottom"></span> </a></li>
               </ul>
             </div>
           </div>
@@ -97,12 +97,16 @@ glyphicon glyphicon-user"></span> <span class="caret"></span></a>
                     <i class="fa fa-ellipsis-v"></i>
                     <i class="fa fa-ellipsis-v"></i>
                   </span>
-                  <input type="checkbox" value="" name="">
-                  <span class="text">{{task.name}}</span>
+                  {% if task.status == "Completed" %}
+                    <span class="glyphicon glyphicon-ok"></span>
+                    <span class="text"><strike>{{task.name}}</strike></span>
+                  {% else %}
+                    <span class="text">{{task.name}}</span>
+                {% endif %}
                   <small class="label label-danger"><i class="fa fa-clock-o"></i id="date">{{task.deadline.strftime('%Y-%m-%d')}}</small>
                   <div class="tools">
-                    <i class="fa fa-edit"></i>
-                    <i class="fa fa-trash-o"></i>
+                    <a href="/{{user.username}}/list/{{tasker[0].id}}/task/{{task.id}}/delete"><i class="fa fa-edit"></i></a>
+                    <a href="/{{user.username}}/list/{{tasker[0].id}}/task/{{task.id}}/delete"><i class="fa fa-trash-o"></i></a>
                   </div>
                 </li>
                 {% endfor %}
