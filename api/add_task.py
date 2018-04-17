@@ -201,10 +201,12 @@ def mark_complete(user_name, task_id, list_id):
     deptask=[]
     flag=0
     for task in current_task.all_dependent():
-        if task.status != 'Completed':
+        if task.status != 'Completed' and task.id != current_task.id:
             deptask.append(task)
             flag = 1
 
-    if(flag == 0):  
+    if(flag == 0):
+        current_task.status = 'Completed'
+        db.session.commit()  
         return redirect(url_for('list_blueprint.show_list',user_name=user_name, list_id=list_id))
-    return render_template('dependent_tasks_left.html',user=user,list=list,tasks=deptask)    
+    return render_template('dependent_tasks_left.html',user=user,list=list,tasks=deptask,current_task = current_task)    
