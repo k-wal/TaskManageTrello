@@ -66,6 +66,16 @@ def go_home(user_name):
     Tasks=Task.query.filter(Task.user_id==userid)
     print(Tasks)
     lists = List.query.filter(List.user_id==userid)
+    tasks_of_lists = []
+    for list in lists:
+        tasks_of_lists.append((list,Task.query.filter(Task.list_id==list.id).order_by(Task.relpriority)))
+
+    print (tasks_of_lists)
+    for tasker in tasks_of_lists:
+        for task1 in tasker[1]:
+            print(tasker[0],task1.name)
+        print('\n\n\n\n')
+    lists = List.query.filter(List.user_id==userid)
 
     if sort_form.validate_on_submit():
         if sort_form.criteria.data == 'Deadline(near)':
@@ -84,9 +94,9 @@ def go_home(user_name):
             tasks=Task.query.filter(Task.user_id==userid).order_by(Task.name.desc())
 
 
-        return render_template('home.html',sort_form=sort_form,user=User.query.get(userid),tasks=tasks,filter_form=filter_form, lists=lists)
+        return render_template('home.html',sort_form=sort_form,user=User.query.get(userid),tasks=tasks, lists=lists, tasks_of_lists=tasks_of_lists)
 
-    return render_template('home.html', sort_form=sort_form,user=User.query.get(userid),tasks=Tasks,lists=lists)
+    return render_template('home.html', sort_form=sort_form,user=User.query.get(userid),tasks=Tasks,lists=lists, tasks_of_lists=tasks_of_lists)
 
 @task_blueprint.route('/<user_name>/list/<list_id>/task/<task_id>',methods=['POST','GET'])
 @login_required
@@ -207,6 +217,6 @@ def mark_complete(user_name, task_id, list_id):
 
     if(flag == 0):
         current_task.status = 'Completed'
-        db.session.commit()  
+        db.session.commit()
         return redirect(url_for('list_blueprint.show_list',user_name=user_name, list_id=list_id))
-    return render_template('dependent_tasks_left.html',user=user,list=list,tasks=deptask,current_task = current_task)    
+    return render_template('dependent_tasks_left.html',user=user,list=list,tasks=deptask,current_task = current_task)

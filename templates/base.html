@@ -1,44 +1,208 @@
 <html>
-	<head>
-        <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet" type="text/css">
-		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-        <style>
-            .caption1 {
-                text-align: center;
-            }
-			.card {
-			    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
-			    transition: 0.3s;
-			    width: 40%;
-			}
 
-			.card:hover {
-			    box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
-			}
+<head>
+	<link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet" type="text/css">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	<style>
+		body {
+			margin-top: 20px;
+			background: #eee;
+		}
 
-			.container {
-			    padding: 2px 16px;
-			}
-        </style>
-		{% if title %}
-		<title>{{title}}</title>
-		{% else %}
-		<title>ERGO</title>
-		{% endif %}
-	</head>
+		.caption1 {
+			text-align: center;
+		}
 
-	<body>
-            <nav class="navbar navbar-inverse">
+		.card {
+			box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+			transition: 0.3s;
+			width: 40%;
+		}
+
+		.card:hover {
+			box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
+		}
+
+		.container {
+			padding: 2px 16px;
+		}
+
+		.box.box-aqua {
+			border-top-color: #00c0ef !important;
+		}
+
+		.box.box-green {
+			border-top-color: #00a65a !important;
+		}
+
+		.box.box-success {
+			border-top-color: #3c8dbc;
+		}
+
+		.box {
+			position: relative;
+			border-radius: 3px;
+			background: #ffffff;
+			border-top: 3px solid #d2d6de;
+			margin-bottom: 20px;
+			width: 100%;
+			min-height: 40%;
+			box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+		}
+
+		.box-header {
+			color: #444;
+			display: block;
+			padding: 10px;
+			position: relative;
+		}
+
+		.box-header>.ion {
+			margin-right: 5px;
+		}
+
+		.box-header .box-title {
+			display: inline-block;
+			font-size: 18px;
+			margin: 0;
+			line-height: 1;
+		}
+
+		.box-header>.box-tools {
+			position: absolute;
+			right: 10px;
+			top: 5px;
+		}
+
+		.inline {
+			display: inline;
+		}
+
+		.box-body {
+			border-top-left-radius: 0;
+			border-top-right-radius: 0;
+			border-bottom-right-radius: 3px;
+			border-bottom-left-radius: 3px;
+			padding: 10px;
+		}
+
+		.todo-list {
+			margin: 0;
+			padding: 0;
+			list-style: none;
+			overflow: auto;
+		}
+
+		.todo-list>li {
+			border-radius: 2px;
+			padding: 10px;
+			background: #f4f4f4;
+			margin-bottom: 2px;
+			border-left: 2px solid #e6e7e8;
+			color: #444;
+		}
+
+		.todo-list>li .label {
+			margin-left: 10px;
+			font-size: 9px;
+		}
+
+		.todo-list>li .tools {
+			display: none;
+			float: right;
+			color: #dd4b39;
+		}
+
+		.todo-list>li:hover .tools {
+			display: block;
+		}
+
+		.no-border {
+			border: 0 !important;
+		}
+
+		.box-footer {
+			border-top-left-radius: 0;
+			border-top-right-radius: 0;
+			border-bottom-right-radius: 3px;
+			border-bottom-left-radius: 3px;
+			border-top: 1px solid #f4f4f4;
+			padding: 10px;
+			background-color: #fff;
+		}
+
+		.btn-default {
+			background-color: #f4f4f4;
+			color: #444;
+			border-color: #ddd;
+		}
+
+		.btn {
+			border-radius: 3px;
+			-webkit-box-shadow: none;
+			box-shadow: none;
+			border: 1px solid transparent;
+		}
+
+		.caption1 {
+			text-align: center;
+		}
+
+		.card {
+			box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+			transition: 0.3s;
+			width: 40%;
+		}
+
+		@media (min-width: 768px) {
+			.navbar-nav.navbar-center {
+				position: absolute;
+				left: 50%;
+				transform: translatex(-50%);
+			}
+		}
+
+		/* .navbar-brand {
+			position: absolute;
+			width: 100%;
+			left: 0;
+			text-align: center;
+			margin: 0 auto;
+		} */
+
+		.navbar-toggle {
+			z-index: 3;
+		}
+
+		.card:hover {
+			box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
+		}
+
+		.container {
+			padding: 2px 16px;
+		}
+	</style>
+	{% if title %}
+	<title>{{title}}</title>
+	{% else %}
+	<title>ERGO</title>
+	{% endif %}
+</head>
+
+<body>
+	<!-- <nav class="navbar navbar-inverse">
                 <div class="container-fluid">
                     <ul class="nav navbar-nav">
                         <li><a href="/user/registration">SIGN UP</a></li>
                     </ul>
                 </div>
-            </nav>
-        <div class="container">
-            {% block content %}{% endblock %}
-        </div>
-	</body>
+            </nav> -->
+	{% block navbar %}{% endblock %}
+	<div class="container">
+		{% block content %}{% endblock %}
+	</div>
+</body>
+
 </html>
