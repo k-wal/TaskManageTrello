@@ -74,6 +74,13 @@ class User(UserMixin, db.Model):
         passive_deletes=True
     )
 
+    comments = db.relationship(
+        'Comment',
+        backref= db.backref('user', lazy='joined'),
+        cascade="all, delete-orphan",
+        passive_deletes=True
+    )
+
     def set_password(self, secret):
         self.password = generate_password_hash(secret)
 
@@ -146,6 +153,7 @@ class Task(db.Model):
     secondaryjoin=(dependent_tasks.c.dependent_id == id),
     backref=db.backref('dependent_tasks', lazy='dynamic'), lazy='dynamic')
 
+
     def set_relpriority(self):
         self.relpriority = self.id
         db.session.commit()
@@ -196,6 +204,13 @@ class List(db.Model):
             cascade="all, delete-orphan",
             passive_deletes=True
         )
+    comments = db.relationship(
+            'Comment',
+            backref= db.backref('list', lazy='joined'),
+            cascade="all, delete-orphan",
+            passive_deletes=True
+        )
+    
     all_users = db.relationship(
     'User', secondary=shared_lists,
     backref=db.backref('all_lists', lazy='dynamic'), lazy='dynamic')
@@ -214,7 +229,27 @@ class List(db.Model):
         if self.is_user(user):
             self.all_users.remove(user)
 
+class Comment(db.Model):
+    id = db.Column('comment_id', db.Integer, primary_key=True, autoincrement=True)
+    user_id = db.Column('user_id', db.Integer, db.ForeignKey('user', ondelete='CASCADE'), nullable=False)
+    list_id = db.Column('list_id', db.Integer, db.ForeignKey('list.list_id', ondelete='CASCADE'), nullable=False)
+    content = db.Column('content', db.String(200))
+    create_time = db.Column('create_time', db.DateTime, default=datetime.utcnow)
+    
 
+    def serialize(self):
+        return {
+            'comment_id': self.id,
+            'create_time': self.create_time,
+            'user_id': self.user_id,
+            'content': self.content,
+            'list_id' : self.list_id
+        }
+
+    def __repr__(self):
+        return self.serialize().__repr__()
+
+    
 # shared_lists = db.Table('shared_lists',
 #     db.Column('list_id', db.Integer, db.ForeignKey('list.list_id')),
 #     db.Column('user_id', db.Integer, db.ForeignKey('user.user_id')),

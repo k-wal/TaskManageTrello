@@ -7,6 +7,7 @@ from flask_migrate import Migrate
 from api.user_registration import user_blueprint
 from api.upload_profile_images import image_blueprint
 from api.add_task import task_blueprint
+from api.comments import comment_blueprint
 from api.lists import list_blueprint
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField

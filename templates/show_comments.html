@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+
+
+    <div class="row">
+
+    <form class="" action="/{{user.username}}/list/{{list.id}}/comments" method="POST">
+            {{ form.csrf_token }}
+            {% from "_formhelpers.html" import render_field %}
+            <div class="form-group">{{render_field(form.content, class_="form-control")}}</div>
+            <input type="submit" value="Add comment">
+    </form>
+    
+{% endblock %}
