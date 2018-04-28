@@ -62,22 +62,31 @@ def add_task(user_name, list_id):
 @login_required
 def go_home(user_name):
     userid=User.query.filter(User.username==user_name).first().id
+    user=User.query.filter(User.username==user_name).first()
     sort_form=SortForm()
     Tasks=Task.query.filter(Task.user_id==userid)
-    print(Tasks)
     notifs=Notif.query.filter(Notif.user_id == userid, Notif.status == 'Unread').order_by(Notif.create_time)
     lists = List.query.filter(List.user_id==userid)
     tasks_of_lists = []
+    
     for list in lists:
         tasks_of_lists.append((list,Task.query.filter(Task.list_id==list.id).order_by(Task.relpriority)))
 
-    print (tasks_of_lists)
-    for tasker in tasks_of_lists:
-        for task1 in tasker[1]:
-            print(tasker[0],task1.name)
-        print('\n\n\n\n')
-    lists = List.query.filter(List.user_id==userid)
+    if 'query' in request.args:
+        Lists = List.query.filter(List.user_id==userid)
+        to_search=request.args.get('query')
+        lists=[]
+        for list in Lists:
+            if to_search in list.name or to_search in list.description:
+                lists.append(list)
+   
+        tasks_of_lists=[]
+   
+        for list in lists:
+            tasks_of_lists.append((list,Task.query.filter(Task.list_id==list.id).order_by(Task.relpriority)))
 
+        
+    '''
     if sort_form.validate_on_submit():
         if sort_form.criteria.data == 'Deadline(near)':
             tasks=Task.query.filter(Task.user_id==userid).order_by(Task.deadline)
@@ -95,7 +104,8 @@ def go_home(user_name):
             tasks=Task.query.filter(Task.user_id==userid).order_by(Task.name.desc())
 
 
-        return render_template('home.html',notifs=notifs,sort_form=sort_form,user=User.query.get(userid),tasks=tasks, lists=lists, tasks_of_lists=tasks_of_lists)
+            return render_template('home.html',notifs=notifs,sort_form=sort_form,user=User.query.get(userid),tasks=tasks, lists=lists, tasks_of_lists=tasks_of_lists)
+    '''
 
     return render_template('home.html',notifs=notifs, sort_form=sort_form,user=User.query.get(userid),tasks=Tasks,lists=lists, tasks_of_lists=tasks_of_lists)
 

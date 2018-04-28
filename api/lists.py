@@ -121,8 +121,9 @@ def add_user(user_name,list_id,to_add):
     user = User.query.filter(User.username == to_add).first()
     current_list.add_user(user)
     db.session.commit()
-    if to_add != user_name:    
-        msg=current_user.name + " added you in " + current_list.name
+    if to_add != user_name:  
+        link='/'+user.username+'/friend_profile/'+current_user.username  
+        msg='<a href="'+link+'">'+current_user.name + '</a> added you in ' + current_list.name
         new_notif = Notif(user_id=user.id, content=msg, typ='Shared',second_user_id=user.id)
         db.session.add(new_notif)
         db.session.commit()
@@ -157,18 +158,21 @@ def exit_list(user_name,list_id):
 
 class SortForm(FlaskForm):
     criteria = SelectField('Sort by:', choices=[('Deadline(near)','Deadline(near)'),('Deadline(far)','Deadline(far)'),('Name(A-Z)','Name(A-Z)'),('Name(Z-A)','Name(Z-A)')],default='Name(A-Z)')
-
+'''
 @list_blueprint.route('/<user_name>/search_lists')
 @login_required
 def search_lists(user_name):
     to_search=request.args.get('query')
+    print("*******")
+    print(to_search)
+    print("*******")
     user=User.query.filter(User.username==user_name).first()
     Lists = List.query.filter(List.user_id==user.id)
     lists=[]
     for list in Lists:
         if to_search in list.name or to_search in list.description:
             lists.append(list)
-
     sort_form=SortForm()
     Lists=lists
     return render_template('home.html', sort_form=sort_form,user=user,lists=Lists)
+'''

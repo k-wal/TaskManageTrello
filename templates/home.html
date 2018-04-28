@@ -21,7 +21,7 @@
 </ul>
 
 <ul class="nav navbar-nav navbar-center">
-	<form class="navbar-form navbar-left" action="/{{user.username}}/search_lists">
+	<form class="navbar-form navbar-left" action="/{{user.username}}/home">
 	  <div class="form-group">
 		<input type="text" class="form-control" placeholder="Search Lists" name="query" id="query">
 	  </div>
@@ -120,7 +120,6 @@ glyphicon glyphicon-user"></span> <span class="caret"></span></a>
 {% endif %}
 </div>
 </div>
-<div class="col-sm-9"></div>
 <div class="col-sm-3" >
 	<h3>Notifications</h3>
 	<a href="/{{user.username}}/see_read_notifs">See read notifications</a>
@@ -139,7 +138,6 @@ glyphicon glyphicon-user"></span> <span class="caret"></span></a>
 	</div>
 	{% endfor %}
 	{% endif %}
-
 </div>
 </div>
 </div>
