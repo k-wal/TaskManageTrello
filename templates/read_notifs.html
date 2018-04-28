@@ -10,7 +10,15 @@
     {% for notif in notifs %}
     <div class="row">
         <div class="col-sm-9">
-            {{notif.content}}
+            {% if notif.typ == 'Shared' %}
+            <a href="/{{user.username}}/friend_profile/{{notif.second_username}}">{{notif.second_username}}</a> shared a list with you.
+            {% endif %}
+            {% if notif.typ == 'Accepted' %}
+            <a href="/{{user.username}}/friend_profile/{{notif.second_username}}">{{notif.second_username}}</a> has accepted your friend request.
+            {% endif %}
+            {% if notif.typ == 'Request' %}
+            <a href="/{{user.username}}/friend_profile/{{notif.second_username}}">{{notif.second_username}}</a> sent you a friend request.
+            {% endif %}
         </div>
     </div>
     {% endfor %}

@@ -120,6 +120,7 @@ glyphicon glyphicon-user"></span> <span class="caret"></span></a>
 {% endif %}
 </div>
 </div>
+<div class="col-sm-9"></div>
 <div class="col-sm-3" >
 	<h3>Notifications</h3>
 	<a href="/{{user.username}}/see_read_notifs">See read notifications</a>
@@ -129,7 +130,15 @@ glyphicon glyphicon-user"></span> <span class="caret"></span></a>
 	{% for notif in notifs %}
 	<div class="row">
 		<div class="col-sm-8">
-			{{notif.content}}
+			{% if notif.typ == 'Shared' %}
+			<a href="/{{user.username}}/friend_profile/{{notif.second_username}}">{{notif.second_username}}</a> shared a list with you.
+			{% endif %}
+			{% if notif.typ == 'Accepted' %}
+			<a href="/{{user.username}}/friend_profile/{{notif.second_username}}">{{notif.second_username}}</a> has accepted your friend request.
+			{% endif %}
+			{% if notif.typ == 'Request' %}
+			<a href="/{{user.username}}/friend_profile/{{notif.second_username}}">{{notif.second_username}}</a> sent you a friend request.
+			{% endif %}
 		</div>
 		<div class="col-sm-4">
 			<a href = "/{{user.username}}/notif/mark_read={{notif.id}}">Mark Read</a>

@@ -266,7 +266,7 @@ class Notif(db.Model):
         *['Accepted', 'Deadline', 'Shared','Request']))
     status = db.Column('status', db.Enum(
         *['Read', 'Unread']), default = 'Unread')
-    second_user_id = db.Column('second_user_id', db.Integer)
+    second_username = db.Column('second_username', db.String(200))
 
         
 
@@ -278,7 +278,7 @@ class Notif(db.Model):
             'user_id': self.user_id,
             'content': self.content,
             'typ' : self.type,
-            'second_user_id' : self.second_user_id
+            'second_username' : self.second_username
     }
 
     def __repr__(self):

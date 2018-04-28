@@ -124,7 +124,7 @@ def add_user(user_name,list_id,to_add):
     if to_add != user_name:  
         link='/'+user.username+'/friend_profile/'+current_user.username  
         msg='<a href="'+link+'">'+current_user.name + '</a> added you in ' + current_list.name
-        new_notif = Notif(user_id=user.id, content=msg, typ='Shared',second_user_id=user.id)
+        new_notif = Notif(user_id=user.id, content=msg, typ='Shared',second_username=user.username)
         db.session.add(new_notif)
         db.session.commit()
     return redirect('/'+user_name+'/list/'+list_id+'/see_shared')

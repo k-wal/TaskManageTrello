@@ -275,7 +275,7 @@ def add_friend(user_name,to_friend):
        # Check connection status between user_a and user_b
     is_friends, is_pending, is_friends_reverse = is_friends_or_pending(user_a_id, user_b_id)
     msg=current_user.name + " sent you a friend request."
-    new_notif = Notif(user_id=user_b.id, content=msg, typ='Request', second_user_id=current_user.id)
+    new_notif = Notif(user_id=user_b.id, content=msg, typ='Request', second_username=current_user.username)
     db.session.add(new_notif)
     db.session.commit()
     
@@ -314,7 +314,7 @@ def accept_friend_request(user_name, friend_id):
     user.follow(current_user)
     db.session.commit()
     msg=current_user.name + " has accepted your friend request"
-    new_notif = Notif(user_id=friend_id, content=msg, typ='Shared',second_user_id=current_user.id)
+    new_notif = Notif(user_id=friend_id, content=msg, typ='Accepted',second_username=current_user.username)
     db.session.add(new_notif)
     db.session.commit()
     return redirect(url_for('show_friend_requests', user_name=user_name))
