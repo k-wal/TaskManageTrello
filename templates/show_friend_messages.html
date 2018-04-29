@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div><h2> Your messages with <a href="/{{user.username}}/friend_profile/{{friend.username}}">{{friend.name}}</a></h2></div>
+
+{% if messages %}
+{% for message in messages %}
+<div class="row">
+	{% if message.from_username == user.username %}
+	<div class="col-sm-6"></div>
+	<div class="col-sm-6">{{message.content}}</div>
+	{% endif %}
+	{% if message.from_username == friend.username %}
+	<div class="col-sm-6">{{message.content}}</div>
+	<div class="col-sm-6"></div>
+	{% endif %}
+</div>
+{% endfor %}
+{% endif %}
+
+<div class="container">
+    <form class="" action="/{{user.username}}/messages/{{friend.username}}" method="POST">
+            {{ form.csrf_token }}
+            {% from "_formhelpers.html" import render_field %}
+            <div class="form-group">{{render_field(form.content, class_="form-control")}}</div>
+            <input type="submit" value="Send message">
+    </form>
+</div>
+
+
+{% endblock %}

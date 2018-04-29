@@ -10,6 +10,7 @@ from api.add_task import task_blueprint
 from api.comments import comment_blueprint
 from api.lists import list_blueprint
 from api.notifications import notif_blueprint
+from api.messages import message_blueprint
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField
 from wtforms.fields.html5 import DateField
@@ -53,6 +54,7 @@ app.register_blueprint(image_blueprint)
 app.register_blueprint(list_blueprint)
 app.register_blueprint(comment_blueprint)
 app.register_blueprint(notif_blueprint)
+app.register_blueprint(message_blueprint)
 
 
 login_manager = LoginManager()

@@ -80,6 +80,7 @@ class User(UserMixin, db.Model):
         cascade="all, delete-orphan",
         passive_deletes=True
     )
+
     notif = db.relationship(
         'Notif',
         backref= db.backref('user', lazy='joined'),
@@ -252,6 +253,25 @@ class Comment(db.Model):
             'user_id': self.user_id,
             'content': self.content,
             'list_id' : self.list_id
+        }
+
+    def __repr__(self):
+        return self.serialize().__repr__()
+
+class Message(db.Model):
+    id = db.Column('message_id', db.Integer, primary_key=True, autoincrement=True)
+    create_time = db.Column('create_time', db.DateTime, default=datetime.utcnow)
+    from_username = db.Column('from_username', db.String(64))
+    to_username = db.Column('to_username',db.String(64))
+    content = db.Column('content',db.String(200))
+
+    def serialize(self):
+        return {
+            'from_username' : self.from_username,
+            'to_username' : self.to_username,
+            'message_id': self.id,
+            'create_time': self.create_time,
+            'content': self.content,
         }
 
     def __repr__(self):
