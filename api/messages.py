@@ -10,7 +10,7 @@ from sqlalchemy import or_
 message_blueprint = Blueprint('message_blueprint', __name__)
 
 class NewMessageForm(FlaskForm):
-    content = StringField('Write message', validators=[InputRequired(), Length(max=200)])
+    content = StringField('Write Message', validators=[InputRequired(), Length(max=200)])
 
 @login_required
 @message_blueprint.route('/<user_name>/show_friends_to_message', methods = ['POST', 'GET'])
@@ -43,6 +43,10 @@ def show_friend_messages(user_name,friend_username):
 	newlist = sorted(messages, key=lambda k: k.create_time)
 	messages=newlist 
 	if form.validate_on_submit():
+		new_notif = Notif(user_id=friend.id,typ='Message',second_username=user.username)
+		db.session.add(new_notif)
+		print(new_notif)
+		db.session.commit()
 		new_message = Message(from_username=user.username,content=form.content.data,to_username=friend.username)
 		db.session.add(new_message)
 		db.session.commit()
@@ -59,4 +63,14 @@ def show_friend_messages(user_name,friend_username):
 		newlist = sorted(messages, key=lambda k: k.create_time)
 		messages=newlist 
 		return render_template('show_friend_messages.html',form=form,friend=friend,user=user,messages=messages)
-	return render_template('show_friend_messages.html',form=form,friend=friend,user=user,messages=messages)        
+	return render_template('show_friend_messages.html',form=form,friend=friend,user=user,messages=messages)
+
+'''
+@login_required
+@message_blueprint.route('/<user_name>/see_message/<notif_id>', methods = ['POST', 'GET'])
+def see_message_notif(user_name,notif_id):
+	notif = Notif.query.get(notif_id)
+	notif.status='Read'
+	db.session.commit()
+	return redirect(url_for('message_blueprint.show_friend_messages',user_name=user_name,friend_username=notif.second_username))
+'''

@@ -283,7 +283,7 @@ class Notif(db.Model):
     content = db.Column('content', db.String(200))
     create_time = db.Column('create_time', db.DateTime, default=datetime.utcnow)
     typ = db.Column('typ', db.Enum(
-        *['Accepted', 'Deadline', 'Shared','Request']))
+        *['Accepted', 'Deadline', 'Shared','Request','Message']))
     status = db.Column('status', db.Enum(
         *['Read', 'Unread']), default = 'Unread')
     second_username = db.Column('second_username', db.String(200))
@@ -297,7 +297,7 @@ class Notif(db.Model):
             'status' : self.status,
             'user_id': self.user_id,
             'content': self.content,
-            'typ' : self.type,
+            'typ' : self.typ,
             'second_username' : self.second_username
     }
 

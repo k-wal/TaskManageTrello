@@ -23,12 +23,14 @@
     <div class="container-fluid">
     {% if users %}
     {% for user in users %}
+    {% if user.username != username %}
     <div class="row">
         <div class="col-sm-2"></div>
     	<div class="col-sm-3">{{user.name}}</div>
     	<div class="col-sm-3">{{user.username}}</div>
         <div clas="col-sm-3"><a href="/{{username}}/add_friend={{user.username}}">Send friend Request</a></div>
     </div>
+    {% endif %}
     {% endfor %}
     {% endif %}
     <div><a href="/{{username}}/following">See who your friends are.</a></div>

@@ -19,6 +19,9 @@
             {% if notif.typ == 'Request' %}
             <a href="/{{user.username}}/friend_profile/{{notif.second_username}}">{{notif.second_username}}</a> sent you a friend request.
             {% endif %}
+            {% if notif.typ == 'Message' %}
+            <a href="/{{user.username}}/friend_profile/{{notif.second_username}}">{{notif.second_username}}</a> sent you a message.
+            {% endif %}
         </div>
     </div>
     {% endfor %}
