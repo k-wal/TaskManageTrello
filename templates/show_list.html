@@ -29,6 +29,12 @@
     </div>
 </div>
 <div class="col-sm-2">
+    <form class="" action="/{{user.username}}/list/{{list.id}}">
+      <div class="form-group">
+        <input type="text" class="form-control" placeholder="Search Tasks" name="query" id="query">
+      </div>
+      <button type="submit" class="btn btn-link glyphicon glyphicon-search"> <span ></span> </button>
+    </form>
     <form class="" action="/{{user.username}}/list/{{list.id}}" method="POST">
             {{ sort_form.csrf_token }}
             {% from "_formhelpers.html" import render_field %}

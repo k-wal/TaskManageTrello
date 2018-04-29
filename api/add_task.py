@@ -182,13 +182,13 @@ def remove_dependency(user_name,task_id,list_id,dep_id):
     current_task.remove_dependency(deptask)
     db.session.commit()
     return redirect('/'+user_name+'/list/'+list_id+'/task/'+task_id+'/dependency')
-
-@task_blueprint.route('/<user_name>/search_tasks')
+'''
+@task_blueprint.route('/<user_name>/list/<list_id>')
 @login_required
-def search_tasks(user_name):
+def search_tasks(user_name,list_id):
     to_search=request.args.get('query')
     user=User.query.filter(User.username==user_name).first()
-    Tasks = Task.query.filter(Task.user_id==user.id)
+    Tasks = Task.query.filter(Task.list_id==list_id)
     tasks=[]
     for task in Tasks:
         if to_search in task.name or to_search in task.description:
@@ -198,6 +198,7 @@ def search_tasks(user_name):
     filter_form=FilterForm()
     Tasks=tasks
     return render_template('home.html', sort_form=sort_form,user=user,tasks=Tasks,filter_form=filter_form)
+'''
 
 @task_blueprint.route('/<user_name>/list/<list_id>/reorder=<task1_id>-<task2_id>')
 @login_required

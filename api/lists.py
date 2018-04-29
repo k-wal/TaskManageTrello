@@ -49,6 +49,14 @@ def show_list(user_name,list_id):
         is_owner = True
     tasks = Task.query.filter(Task.list_id==list_id).order_by(Task.relpriority)
 
+    if 'query' in request.args:
+        to_search=request.args.get('query')
+        Tasks=[]
+        for task in tasks:
+            if to_search in task.name or to_search in task.description:
+                Tasks.append(task)
+        tasks=Tasks
+
     if sort_form.validate_on_submit():
         if sort_form.criteria.data == 'Deadline(near)':
             tasks=Task.query.filter(Task.list_id==list_id).order_by(Task.deadline)
