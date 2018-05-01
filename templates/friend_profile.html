@@ -19,4 +19,8 @@
     <div class = "row">
         <div class="col-sm-6"><b>Number of shared lists</b></div><div class="col-sm-6">{{shared_number}}</div>
     </div>
+    <br><br>
+    {% if friend.username != user.username %}
+    <div><a href="/{{user.username}}/messages/{{friend.username}}">See messages</a></div>
+    {% endif %}
 {% endblock %}
