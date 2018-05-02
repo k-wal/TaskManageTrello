@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8" />
+	<link rel="icon" type="image/png" href="../static/img/favicon2.jpg">
+	<link href='https://fonts.googleapis.com/css?family=Sofia' rel='stylesheet'>
+	<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
+
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+
+	<title>{{user.firstname}}, Home-Page</title>
+
+	<meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
+	<meta name="viewport" content="width=device-width" />
+
+	<link href="../static/css/bootstrap.min.css" rel="stylesheet" />
+	<link href="../static/css/animate.min.css" rel="stylesheet" />
+	<link href="../static/css/light-bootstrap-dashboard.css?v=1.4.0" rel="stylesheet" />
+
+	<link href="../static/css/demo.css" rel="stylesheet" />
+
+	<link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
+	<link href='http://fonts.googleapis.com/css?family=Roboto:400,700,300' rel='stylesheet' type='text/css'>
+	<link href="../static/css/pe-icon-7-stroke.css" rel="stylesheet" />
+	<link href='https://fonts.googleapis.com/css?family=Amita' rel='stylesheet'>
+	<link href='https://fonts.googleapis.com/css?family=Galada' rel='stylesheet'>
+
+	<link href="{{ url_for('static', filename='fullcalendar.min.css') }}" rel='stylesheet' />
+	<link href="{{ url_for('static', filename='fullcalendar.print.css') }}" rel='stylesheet' media='print' />
+	<script src="{{ url_for('static', filename='lib/moment.min.js') }}"></script>
+	<script src="{{ url_for('static', filename='lib/jquery.min.js') }}"></script>
+	<script src="{{ url_for('static', filename='fullcalendar.min.js') }}"></script>
+	<script>
+		var d = new Date()
+		$(document).ready(function() {
+
+			$('#calendar').fullCalendar({
+				header: {
+					left: 'prev,next today',
+					center: 'title',
+					right: 'month,agendaWeek,agendaDay'
+				},
+				defaultDate: d,
+				editable: true,
+				eventLimit: true, // allow "more" link when too many events
+				events: {
+					url: 'data',
+					error: function() {
+						$('#script-warning').show();
+					}
+				},
+				loading: function(bool) {
+					$('#loading').toggle(bool);
+				}
+			});
+
+		});
+	</script>
+	<style>
+		/* body {
+			margin: 0;
+			padding: 0;
+			font-family: "Lucida Grande", Helvetica, Arial, Verdana, sans-serif;
+			font-size: 14px;
+		} */
+
+		#script-warning {
+			display: none;
+			background: #eee;
+			border-bottom: 1px solid #ddd;
+			padding: 0 10px;
+			line-height: 40px;
+			text-align: center;
+			font-weight: bold;
+			font-size: 12px;
+			color: red;
+		}
+
+		#loading {
+			display: none;
+			position: absolute;
+			top: 10px;
+			right: 10px;
+		}
+
+		#calendar {
+			max-width: 900px;
+			margin: 40px auto;
+			padding: 0 10px;
+		}
+	</style>
+</head>
+
+<body>
+
+
+	<div class="wrapper">
+		<div class="sidebar" data-color="azure" data-image="../static/img/sidebar-3.jpg">
+
+
+			<div class="sidebar-wrapper">
+				<div class="logo">
+					<a href="" class="simple-text" style="font-family: 'Sofia';font-size: 30px;">
+	                    COMPITO
+	                </a>
+				</div>
+
+				<ul class="nav">
+					<li>
+						<a href="/{{user.username}}/home">
+	                        <i class="pe-7s-note2"></i>
+	                        <p>Dashboard</p>
+	                    </a>
+					</li>
+					<li>
+						<a href="/{{user.username}}/update_information">
+	                        <i class="pe-7s-user"></i>
+	                        <p>User Profile</p>
+	                    </a>
+					</li>
+					<li class="active">
+						<a href="/show_calander">
+	                        <i class="fa fa-calendar" style="font-size:24px"></i>
+	                        <p>Calender</p>
+	                    </a>
+					</li>
+					<li>
+						<a href="/{{user.username}}/friends">
+	                        <i class="pe-7s-users"></i>
+	                        <p>Friends</p>
+	                    </a>
+					</li>
+					<li>
+						<a href="/{{user.username}}/follow">
+	                        <i class="pe-7s-global"></i>
+	                        <p>Search Users</p>
+	                    </a>
+					</li>
+					<li>
+						<a href="/{{user.username}}/friend_requests">
+	                        <i class="pe-7s-link"></i>
+	                        <p>Friend Requests</p>
+	                    </a>
+					</li>
+					<li>
+						<a href="notifications.html">
+	                        <i class="pe-7s-bell"></i>
+	                        <p>Notifications</p>
+	                    </a>
+					</li>
+					<li class="active-pro">
+						<a href="">
+	                        <i class="pe-7s-rocket"></i>
+	                        <p>About Us</p>
+	                    </a>
+					</li>
+					<li>
+						<a href="notifications.html">
+	                        <i class="pe-7s-chat"></i>
+	                        <p>Message</p>
+	                    </a>
+					</li>
+				</ul>
+			</div>
+		</div>
+
+		<div class="main-panel">
+			<nav class="navbar navbar-default navbar-fixed">
+				<div class="container-fluid">
+					<div class="navbar-header">
+						<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navigation-example-2">
+	                        <span class="sr-only">Toggle navigation</span>
+	                        <span class="icon-bar"></span>
+	                        <span class="icon-bar"></span>
+	                        <span class="icon-bar"></span>
+	                    </button>
+						<a class="navbar-brand" href="#">Howdy, {{user.firstname}}</a>
+					</div>
+					<div class="collapse navbar-collapse">
+						<ul class="nav navbar-nav navbar-left">
+							<li>
+								<a href="#" class="dropdown-toggle" data-toggle="dropdown">
+	                                <i class="fa fa-dashboard"></i>
+									<p class="hidden-lg hidden-md">Dashboard</p>
+	                            </a>
+							</li>
+							<li class="dropdown">
+								<a href="#" class="dropdown-toggle" data-toggle="dropdown">
+	                                    <i class="fa fa-globe"></i>
+	                                    <b class="caret hidden-sm hidden-xs"></b>
+	                                    <span class="notification hidden-sm hidden-xs">{{countnotifs}}</span>
+										<p class="hidden-lg hidden-md">
+	                                         Notifications
+											<b class="caret"></b>
+										</p>
+	                              </a>
+								<ul class="dropdown-menu" style="width:30vw;">
+									{% if countnotifs > 0 %} {% for notif in notifs %} {% if notif.typ == 'Accepted'%}
+									<li  style=" text-overflow:ellipsis; overflow:hidden; white-space:pre;"><a href="/{{user.username}}/friend_profile/{{notif.second_username}}">{{notif.second_username}} has accepted your friend request.</a></li>
+									{% endif %} {% if notif.typ == 'Shared'%}
+									<li  style=" text-overflow:ellipsis; overflow:hidden; white-space:pre;"><a href="/{{user.username}}/friend_profile/{{notif.second_username}}">{{notif.second_username}} shared a list with you.</a></li>
+									{% endif %} {% if notif.typ == 'Request'%}
+									<li  style=" text-overflow:ellipsis; overflow:hidden; white-space:pre;"><a href="/{{user.username}}/friend_profile/{{notif.second_username}}">{{notif.second_username}} sent you a friend request.</a></li>
+									{% endif %} {% endfor %} {% else %}
+									<li  style=" text-overflow:ellipsis; overflow:hidden; white-space:pre;">No Notifications. Whew!</li>
+									{% endif %}
+								</ul>
+							</li>
+							<li>
+								<a href="">
+	                        <input type="text" class="form-control" placeholder="Search Lists" name="query" id="query" style="height:3.5vh">
+	                            </a>
+							</li>
+							<li>
+								<a href="">
+	                                <i class="fa fa-search"></i>
+	                                <p class="hidden-lg hidden-md">Search</p>
+	                            </a>
+							</li>
+
+						</ul>
+
+						<ul class="nav navbar-nav navbar-right">
+							<li>
+								<a href="/{{user.username}}/addlist">
+									<p>Add List</p>
+								</a>
+							</li>
+							<li class="dropdown">
+								<a href="#" class="dropdown-toggle" data-toggle="dropdown">
+									<p>
+										<i class="fa fa-cog"></i>
+										<b class="caret"></b>
+									</p>
+
+								</a>
+								<ul class="dropdown-menu">
+									<li><a href="#">Action</a></li>
+									<li><a href="#">Another action</a></li>
+									<li><a href="#">Something</a></li>
+									<li><a href="#">Another action</a></li>
+									<li><a href="#">Something</a></li>
+									<li class="divider"></li>
+									<li><a href="#">Separated link</a></li>
+								</ul>
+							</li>
+							<li>
+								<a href="/{{user.username}}/logout">
+									<p>Log out</p>
+								</a>
+							</li>
+							<li class="separator hidden-lg hidden-md"></li>
+						</ul>
+					</div>
+				</div>
+			</nav>
+			<div class="content">
+				<div class="container-fluid">
+					<div class="row">
+						<div class="col-md-12">
+							<div class="card">
+								<div class="header">
+									<h4 class="title">Calender</h4>
+								</div>
+								<div class="content">
+									<div id='script-warning'>
+										Error getting data from <code>/data</code> endpoint.
+									</div>
+
+									<div id='loading'>loading...</div>
+
+									<div class="row">
+										<div id='calendar'></div>
+									</div>
+								</div>
+							</div>
+						</div>
+
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+
+
+
+	<div class="container">
+		<div class="row">
+			<div class="col-sm-4">
+			</div>
+			<div class="col-sm-4">
+			</div>
+			<div class="col-sm-4">
+				<div id='script-warning'>
+					Error getting data from <code>/data</code> endpoint.
+				</div>
+
+				<div id='loading'>loading...</div>
+
+				<div class="row">
+					<div id='calendar'></div>
+				</div>
+			</div>
+
+		</div>
+
+	</div>
+</body>
+<link href='/static/fullcalendar/fullcalendar.css' rel='stylesheet' />
+<link href='/static/fullcalendar/fullcalendar.print.css' rel='stylesheet' media='print' />
+<script src='/static/fullcalendar/lib/moment.min.js'></script>
+<script src='/static/fullcalendar/lib/jquery.min.js'></script>
+<script src='/static/fullcalendar/fullcalendar.min.js'></script>
+
+<script src="../static/js/bootstrap.min.js" type="text/javascript"></script>
+
+<script src="../static/js/chartist.min.js"></script>
+
+<script src="../static/js/bootstrap-notify.js"></script>
+
+<!--  Google Maps Plugin    -->
+<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=YOUR_KEY_HERE"></script>
+
+<!-- Light Bootstrap Table Core javascript and methods for Demo purpose -->
+<script src="../static/js/light-bootstrap-dashboard.js?v=1.4.0"></script>
+
+<!-- Light Bootstrap Table DEMO methods, don't include it in your project! -->
+<script src="../static/js/demo.js"></script>
+
+</html>
