@@ -2,6 +2,7 @@ from flask import Flask, Blueprint, render_template, url_for, request, redirect,
 from config.config import Config
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_bootstrap import Bootstrap
+import json
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from api.user_registration import user_blueprint
@@ -280,7 +281,7 @@ def add_friend(user_name,to_friend):
     new_notif = Notif(user_id=user_b.id, content=msg, typ='Request', second_username=current_user.username)
     db.session.add(new_notif)
     db.session.commit()
-    
+
     if user_a_id == user_b_id:
         return render_template('now_following_message.html',message='You cannot add yourself as a friend.',user_name=user_name,user=user_b)
     elif is_friends or is_friends_reverse:
@@ -363,6 +364,57 @@ def friend_profile(user_name,friend_username):
             shared_number = shared_number + 1
 
     return render_template('friend_profile.html',shared_number=shared_number,friend=friend,user=user)
+
+def myconverter(o):
+    if isinstance(o, datetime.datetime):
+        return o.__str__()
+
+@app.route("/show_calander")
+def calendar():
+    notifs=Notif.query.filter(Notif.user_id == current_user.id, Notif.status == 'Unread').order_by(Notif.create_time)
+    countnotifs = 0
+    for notif in notifs:
+        countnotifs += 1
+    return render_template('json.html', user=current_user, notifs=notifs, countnotifs=countnotifs)
+
+
+@app.route("/data")
+@login_required
+def getevents():
+    start_date = request.args.get('start', '')
+    end_date = request.args.get('end', '')
+    try:
+        os.remove('calanderevents.json')
+    except OSError:
+        pass
+    file =  open('calanderevents.json','w+')
+    tasks = Task.query.filter(Task.user_id==current_user.id).order_by(Task.relpriority)
+    jsonlist = []
+    for task in tasks:
+        s = "{}-{}-{}".format(task.create_time.year,task.create_time.month,task.create_time.day)
+        d = "{}-{}-{}".format(task.deadline.year,task.deadline.month,task.deadline.day)
+        print(s,d)
+        current_date = datetime.utcnow()
+        date_2_days = datetime.now() + timedelta(days=2)
+        color = '#007FFF';
+        if current_date <= task.deadline <= date_2_days:
+            print("kjadfh")
+            color = '#DC143C';
+        taskobj = {
+                    'title':task.name,
+                    'start':d,
+                    # 'end':d,
+                    'id':task.id,
+                    'color':color
+                  }
+    jsonlist.append(taskobj)
+    file.write(json.dumps(jsonlist, default = myconverter))
+    file.close()
+    with open("calanderevents.json", "r") as input_data:
+        # you should use something else here than just plaintext
+        # check out jsonfiy method or the built in json module
+        # http://flask.pocoo.org/docs/0.10/api/#module-flask.json
+        return input_data.read()
 
 
 ############################
