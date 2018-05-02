@@ -2,8 +2,8 @@ from flask import Flask, Blueprint, render_template, url_for, request, redirect,
 from config.config import Config
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_bootstrap import Bootstrap
-import json
 from flask_sqlalchemy import SQLAlchemy
+import json
 from flask_migrate import Migrate
 from api.user_registration import user_blueprint
 from api.upload_profile_images import image_blueprint
@@ -364,6 +364,8 @@ def friend_profile(user_name,friend_username):
             shared_number = shared_number + 1
 
     return render_template('friend_profile.html',shared_number=shared_number,friend=friend,user=user)
+
+
 
 def myconverter(o):
     if isinstance(o, datetime.datetime):
